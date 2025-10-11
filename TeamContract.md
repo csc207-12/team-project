@@ -77,4 +77,5 @@ Team Member Signatures:
 * Vicky Tao
 * Sihan Wu
 * Arfa Obaidullah
+* Jason Zhang
 (type names here)
