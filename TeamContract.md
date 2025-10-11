@@ -78,4 +78,5 @@ Team Member Signatures:
 * Sihan Wu
 * Arfa Obaidullah
 * Jason Zhang
+* Bhavikaa Goenka
 (type names here)
