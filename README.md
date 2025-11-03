@@ -12,7 +12,7 @@ By keeping this README up-to-date,
 your team will find it easier to prepare for the final presentation
 at the end of the term.
 
-# CSC207 Fall 2023 – Project Blueprint
+# CSC207
 
 ## Team Information
 **Team Name:** Twelve  
