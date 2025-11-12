@@ -16,7 +16,7 @@ public class SignupPresenter implements SignupOutputBoundary {
         if (output.isSuccess()) {
             view.onSignupSuccess(output.getUsername());
         } else {
-            view.displayMessage(output.getMessage());
+            view.onSignupFailure(output.getMessage());
         }
     }
 }

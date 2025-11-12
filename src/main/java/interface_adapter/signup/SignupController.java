@@ -3,7 +3,7 @@ package interface_adapter.signup;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInputData;
 
-/** Controller in the interface-adapter layer. */
+// Controller in the interface adapter layer for handling signup requests
 public class SignupController {
     private final SignupInputBoundary interactor;
 

@@ -1,16 +1,15 @@
 package app;
 
-import entity.User;
 import interface_adapter.*;
 import use_case.*;
-import view.SignupFrame;
+import view.SignupPanel;
 import view.WeatherApp;
 import data_access.*;
 
 public class Main {
     public static void main(String[] args) {
-        SignupFrame signupFrame = new SignupFrame();
-        signupFrame.setVisible(true);
+        SignupPanel signupPanel = new SignupPanel();
+        signupPanel.setVisible(true);
 
         // ViewModel
         WeatherViewModel viewModel = new WeatherViewModel();

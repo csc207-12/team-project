@@ -14,14 +14,14 @@ import java.util.Map;
 /**
  * A scrollable frame for selecting clothing style preferences.
  */
-public class StyleFrame extends JFrame implements StyleView {
+public class StylePanel extends JFrame implements StyleView {
     private final StyleController controller;
     private final String username;
 
     // Checkboxes for each clothing item
     private final Map<String, JCheckBox> checkboxes = new HashMap<>();
 
-    public StyleFrame(String username, UserRepository repository) {
+    public StylePanel(String username, UserRepository repository) {
         this.username = username;
 
         StylePresenter presenter = new StylePresenter(this);
