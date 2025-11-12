@@ -7,6 +7,8 @@ import okhttp3.*;
 
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -33,15 +35,88 @@ public class SupabaseUserRepository implements UserRepository {
 
     @Override
     public User findByUsername(String username) {
+        String url = supabaseUrl + "/rest/v1/" + SupabaseConfig.TABLE_NAME + "?username=eq." + username;
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("apikey", apiKey)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json")
+                .get()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                System.err.println("Failed to fetch user from Supabase. Response code: " + response.code());
+                if (response.body() != null) {
+                    System.err.println("Response body: " + response.body().string());
+                }
+                return null;
+            }
+
+            if (response.body() == null) {
+                System.err.println("Response body is null");
+                return null;
+            }
+
+            String responseBody = response.body().string();
+            System.out.println("Supabase response: " + responseBody);
+
+            JSONArray jsonArray = new JSONArray(responseBody);
+
+            if (jsonArray.length() == 0) {
+                System.out.println("No user found with username: " + username);
+                return null;
+            }
+
+
+            String name = jsonArray.getJSONObject(0).getString("username");
+            String password = jsonArray.getJSONObject(0).getString("password");
+            String location = jsonArray.getJSONObject(0).getString("location");
+            String gender = jsonArray.getJSONObject(0).getString("gender");
+            HashMap<String, Boolean> stylePreferences = new HashMap<>();
+
+            Iterator<String> iterator = jsonArray.getJSONObject(0).keys();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                Object value = jsonArray.getJSONObject(0).get(key);
+
+                if (value instanceof Boolean) {
+                    stylePreferences.put(key, (Boolean) value);
+                }
+            }
+
+            User user = new User(name, password, location, gender);
+            user.setStyle(stylePreferences);
+            return user;
+
+        } catch (IOException e) {
+            System.err.println("Error fetching user from Supabase: " + e.getMessage());
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
     public boolean exists(String username) {
-        // Note: This would require implementing a query to Supabase
-        // For now, returning false to allow new signups
-        // TODO: Implement existence check via Supabase query if needed
-        return false;
+        String url = supabaseUrl + "/rest/v1/" + SupabaseConfig.TABLE_NAME + "?username=eq." + username;
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("apikey", apiKey)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json")
+                .get()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            JSONArray jsonArray = new JSONArray(response.body().string());
+
+            return jsonArray.length() > 0;
+
+        }   catch (IOException e) {
+            System.err.println("Error checking user existence in Supabase: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void uploadToSupabase(User user) {

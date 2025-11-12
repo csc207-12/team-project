@@ -1,5 +1,6 @@
 package app;
 
+import entity.User;
 import interface_adapter.*;
 import use_case.*;
 import view.SignupFrame;
@@ -10,9 +11,6 @@ public class Main {
     public static void main(String[] args) {
         SignupFrame signupFrame = new SignupFrame();
         signupFrame.setVisible(true);
-
-        SupabaseUserRepository supabaseUserRepository = new SupabaseUserRepository();
-        supabaseUserRepository.findByUsername("Amey");
 
         // ViewModel
         WeatherViewModel viewModel = new WeatherViewModel();
