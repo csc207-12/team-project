@@ -76,12 +76,12 @@ public class SignupPanel extends JFrame implements SignupView {
 
     @Override
     public void onSignupFailure(String message) {
-        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(this, message));
+        JOptionPane.showMessageDialog(this, message);
     }
 
     @Override
     public void onSignupSuccess(String username) {
-        SwingUtilities.invokeLater(() -> {
+
             JOptionPane.showMessageDialog(this,
                     "Registration successful! Now let's set up your style preferences.",
                     "Success",
@@ -91,6 +91,6 @@ public class SignupPanel extends JFrame implements SignupView {
 
             StylePanel stylePanel = new StylePanel(username, repository);
             stylePanel.setVisible(true);
-        });
+
     }
 }

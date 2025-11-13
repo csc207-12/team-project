@@ -126,6 +126,8 @@ public class StylePanel extends JFrame implements StyleView {
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
             dispose(); // Close the style frame
+            LoginPanel loginPanel = new LoginPanel();
+            loginPanel.setVisible(true);
         });
     }
 
