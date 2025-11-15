@@ -1,9 +1,12 @@
 package interface_adapter.login;
 
+import entity.User;
+
 // State info representiong login process
 public class LoginState {
     private String username = "";
     private String errorMessage = "";
+    private User user = null;
 
     public LoginState() {
     }
@@ -22,5 +25,13 @@ public class LoginState {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

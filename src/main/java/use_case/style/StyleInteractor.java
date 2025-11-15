@@ -1,5 +1,6 @@
 package use_case.style;
 
+import data_access.PendingUserStorage;
 import data_access.SupabaseUserRepository;
 import entity.User;
 import use_case.UserRepository;
@@ -20,19 +21,17 @@ public class StyleInteractor implements StyleInputBoundary {
 
     @Override
     public void saveStylePreferences(StyleInputData input) {
-        // Retrieve user from in-memory repo
-        User user = repository.findByUsername(input.getUsername());
-
-        if (user == null) {
-            presenter.present(new StyleOutputData(false, "User not found", input.getUsername()));
-            return;
-        }
+        // retrieve user from pending storage
+        User user = PendingUserStorage.getInstance().getPendingUser(input.getUsername());
 
         // Update style preferences
         user.setStyle(input.getStylePreferences());
 
         // Save user to database
         supabaseRepository.save(user);
+
+        // Remove from pending storage
+        PendingUserStorage.getInstance().removePendingUser(input.getUsername());
 
         presenter.present(new StyleOutputData(true, "Style preferences saved successfully!", input.getUsername()));
     }

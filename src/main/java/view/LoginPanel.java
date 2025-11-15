@@ -1,5 +1,6 @@
 package view;
 
+import data_access.UserSession;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginState;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
- // Login view that observes the LoginViewModel for state changes.
+// Login view that observes the LoginViewModel for state changes.
 
 public class LoginPanel extends JFrame implements PropertyChangeListener {
     private final LoginController controller;
@@ -36,7 +37,6 @@ public class LoginPanel extends JFrame implements PropertyChangeListener {
         JPanel form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
 
         // Add username and password fields
         form.add(createFieldPanel("Username:", usernameField));
@@ -92,6 +92,11 @@ public class LoginPanel extends JFrame implements PropertyChangeListener {
                 JOptionPane.showMessageDialog(this, state.getErrorMessage(), "Login Error", JOptionPane.ERROR_MESSAGE);
             } else if (state.getUsername() != null && !state.getUsername().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + state.getUsername() + "!");
+                if (state.getUser() != null) {
+                    // Store user in UserSession
+                    UserSession.getInstance().setCurrentUser(state.getUser());
+                }
+                dispose();
             }
         }
     }

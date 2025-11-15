@@ -1,16 +1,15 @@
 package app;
 
-import interface_adapter.*;
-import use_case.*;
 import view.LoginPanel;
-import view.SignupPanel;
-import view.WeatherApp;
-import data_access.*;
 
 public class Main {
+
     public static void main(String[] args) {
         LoginPanel loginPanel = new LoginPanel();
         loginPanel.setVisible(true);
+
+        // After successful login, the user is stored in UserSession (called a singleton class that only has one global instance)
+        // Access it at any point with: UserSession.getInstance().getCurrentUser()
 
 //        SignupPanel signupPanel = new SignupPanel();
 //        signupPanel.setVisible(true);

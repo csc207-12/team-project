@@ -1,5 +1,6 @@
 package use_case.signup;
 
+import data_access.PendingUserStorage;
 import entity.User;
 import use_case.UserRepository;
 
@@ -33,9 +34,11 @@ public class SignupInteractor implements SignupInputBoundary {
             return;
         }
 
-        // Create and save user
+        // Create user and store in pending storage
         User user = new User(input.getUsername(), input.getPassword(), input.getLocation(), input.getGender());
-        repository.save(user);
+        PendingUserStorage.getInstance().storePendingUser(user);
+
+        // User will be saved to database after style preferences are added in StyleInteractor
         presenter.present(new SignupOutputData(true, "Registration successful for " + input.getUsername(), input.getUsername()));
     }
 }

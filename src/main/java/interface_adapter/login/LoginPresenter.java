@@ -18,9 +18,11 @@ public class LoginPresenter implements LoginOutputBoundary {
         if (outputData.isSuccess()) {
             state.setUsername(outputData.getUsername());
             state.setErrorMessage("");
+            state.setUser(outputData.getUser());
         } else {
             state.setUsername("");
             state.setErrorMessage(outputData.getMessage());
+            state.setUser(null);
         }
 
         viewModel.setState(state);
