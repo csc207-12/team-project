@@ -3,6 +3,8 @@ package use_case.login;
 import data_access.SupabaseUserRepository;
 import entity.User;
 
+
+// Interactor for handling user login
 public class LoginInteractor implements LoginInputBoundary{
     private final LoginOutputBoundary outputBoundary;
 

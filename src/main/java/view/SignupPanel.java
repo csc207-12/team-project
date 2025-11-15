@@ -2,19 +2,22 @@ package view;
 
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
-import interface_adapter.signup.SignupView;
-import data_access.InMemoryUserRepository;
+import interface_adapter.signup.SignupState;
+import interface_adapter.signup.SignupViewModel;
+import data_access.SupabaseUserRepository;
 import use_case.signup.SignupInteractor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-/**
- * Swing frame that prompts user to sign up
- */
-public class SignupPanel extends JFrame implements SignupView {
+// Signup view that observes the SignupViewModel for state changes.
+
+public class SignupPanel extends JFrame implements PropertyChangeListener {
     private final SignupController controller;
-    private final InMemoryUserRepository repository;
+    private final SignupViewModel viewModel;
+    private final SupabaseUserRepository repository;
 
     private final JTextField usernameField = new JTextField(20);
     private final JPasswordField passwordField = new JPasswordField(20);
@@ -22,10 +25,14 @@ public class SignupPanel extends JFrame implements SignupView {
     private final JComboBox<String> genderBox = new JComboBox<>(new String[]{"Prefer not to say", "Male", "Female", "Other"});
 
     public SignupPanel() {
-        this.repository = new InMemoryUserRepository();
-        SignupPresenter presenter = new SignupPresenter(this);
+        this.repository = new SupabaseUserRepository();
+
+        this.viewModel = new SignupViewModel();
+        SignupPresenter presenter = new SignupPresenter(viewModel);
         SignupInteractor interactor = new SignupInteractor(repository, presenter);
         this.controller = new SignupController(interactor);
+
+        viewModel.addPropertyChangeListener(this);
 
         setTitle("Signup");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -35,6 +42,7 @@ public class SignupPanel extends JFrame implements SignupView {
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        // Add username, password, location, and gender fields
         form.add(createFieldPanel("Username:", usernameField));
         form.add(Box.createVerticalStrut(10));
         form.add(createFieldPanel("Password:", passwordField));
@@ -75,22 +83,23 @@ public class SignupPanel extends JFrame implements SignupView {
     }
 
     @Override
-    public void onSignupFailure(String message) {
-        JOptionPane.showMessageDialog(this, message);
-    }
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("state".equals(evt.getPropertyName())) {
+            final SignupState state = viewModel.getState();
 
-    @Override
-    public void onSignupSuccess(String username) {
+            if (state.getErrorMessage() != null && !state.getErrorMessage().isEmpty()) {
+                JOptionPane.showMessageDialog(this, state.getErrorMessage(), "Signup Error", JOptionPane.ERROR_MESSAGE);
+            } else if (state.getUsername() != null && !state.getUsername().isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Registration successful! Now let's set up your style preferences.",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-            JOptionPane.showMessageDialog(this,
-                    "Registration successful! Now let's set up your style preferences.",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
+                dispose();
 
-            dispose();
-
-            StylePanel stylePanel = new StylePanel(username, repository);
-            stylePanel.setVisible(true);
-
+                StylePanel stylePanel = new StylePanel(state.getUsername(), repository);
+                stylePanel.setVisible(true);
+            }
+        }
     }
 }

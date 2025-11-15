@@ -1,18 +1,27 @@
 package interface_adapter.style;
+
 import use_case.style.StyleOutputBoundary;
 import use_case.style.StyleOutputData;
-/** Presenter that transforms style output data into view calls. */
+
+
+// presenter that transforms style output data into view model updates
 public class StylePresenter implements StyleOutputBoundary {
-    private final StyleView view;
-    public StylePresenter(StyleView view) {
-        this.view = view;
+    private final StyleViewModel viewModel;
+
+    public StylePresenter(StyleViewModel viewModel) {
+        this.viewModel = viewModel;
     }
+
     @Override
     public void present(StyleOutputData output) {
-        if (output.isSuccess()) {
-            view.onStyleSaveSuccess(output.getMessage());
-        } else {
-            view.onStyleSaveFailure(output.getMessage());
-        }
+        final StyleState state = viewModel.getState();
+
+        state.setMessage(output.getMessage());
+        state.setSuccess(output.isSuccess());
+
+        viewModel.setState(state);
+        viewModel.firePropertyChange();
     }
 }
+
+

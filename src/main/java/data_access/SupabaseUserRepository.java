@@ -11,10 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Repository that saves user profiles to Supabase database using OkHttp.
- * No local caching - all operations go directly to Supabase.
- */
+// Saves uer data to Supabase database
+
 public class SupabaseUserRepository implements UserRepository {
     private final String supabaseUrl;
     private final String apiKey;

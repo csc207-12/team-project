@@ -3,20 +3,27 @@ package interface_adapter.signup;
 import use_case.signup.SignupOutputBoundary;
 import use_case.signup.SignupOutputData;
 
-/** Presenter that transforms output data into a view call. */
+// presenter that transforms signup output data into view model updates
 public class SignupPresenter implements SignupOutputBoundary {
-    private final SignupView view;
+    private final SignupViewModel viewModel;
 
-    public SignupPresenter(SignupView view) {
-        this.view = view;
+    public SignupPresenter(SignupViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
     @Override
     public void present(SignupOutputData output) {
+        final SignupState state = viewModel.getState();
+
         if (output.isSuccess()) {
-            view.onSignupSuccess(output.getUsername());
+            state.setUsername(output.getUsername());
+            state.setErrorMessage("");
         } else {
-            view.onSignupFailure(output.getMessage());
+            state.setUsername("");
+            state.setErrorMessage(output.getMessage());
         }
+
+        viewModel.setState(state);
+        viewModel.firePropertyChange();
     }
 }

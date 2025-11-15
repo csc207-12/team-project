@@ -3,18 +3,27 @@ package interface_adapter.login;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
 
+// presenter transforms login output data into view model updates
 public class LoginPresenter implements LoginOutputBoundary {
-    private final LoginView view;
+    private final LoginViewModel viewModel;
 
-    public LoginPresenter(LoginView view) {
-        this.view = view;
+    public LoginPresenter(LoginViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
+    @Override
     public void present(LoginOutputData outputData) {
+        final LoginState state = viewModel.getState();
+
         if (outputData.isSuccess()) {
-            view.onLoginSuccess(outputData.getUsername());
+            state.setUsername(outputData.getUsername());
+            state.setErrorMessage("");
         } else {
-            view.onLoginFailure(outputData.getMessage());
+            state.setUsername("");
+            state.setErrorMessage(outputData.getMessage());
         }
+
+        viewModel.setState(state);
+        viewModel.firePropertyChange();
     }
 }

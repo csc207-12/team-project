@@ -3,9 +3,9 @@ package use_case.signup;
 import entity.User;
 import use_case.UserRepository;
 
-/**
- * Implements the signup use case interactor.
- */
+
+// Interactor for user signup
+
 public class SignupInteractor implements SignupInputBoundary {
     private final UserRepository repository;
     private final SignupOutputBoundary presenter;

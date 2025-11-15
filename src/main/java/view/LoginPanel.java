@@ -2,22 +2,31 @@ package view;
 
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
-import interface_adapter.login.LoginView;
+import interface_adapter.login.LoginState;
+import interface_adapter.login.LoginViewModel;
 import use_case.login.LoginInteractor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class LoginPanel extends JFrame implements LoginView {
+ // Login view that observes the LoginViewModel for state changes.
+
+public class LoginPanel extends JFrame implements PropertyChangeListener {
     private final LoginController controller;
+    private final LoginViewModel viewModel;
 
     private final JTextField usernameField = new JTextField(20);
     private final JPasswordField passwordField = new JPasswordField(20);
 
     public LoginPanel() {
-        LoginPresenter presenter = new LoginPresenter(this);
+        this.viewModel = new LoginViewModel();
+        LoginPresenter presenter = new LoginPresenter(viewModel);
         LoginInteractor interactor = new LoginInteractor(presenter);
         this.controller = new LoginController(interactor);
+
+        viewModel.addPropertyChangeListener(this);
 
         setTitle("Login");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -28,6 +37,8 @@ public class LoginPanel extends JFrame implements LoginView {
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+
+        // Add username and password fields
         form.add(createFieldPanel("Username:", usernameField));
         form.add(Box.createVerticalStrut(20));
         form.add(createFieldPanel("Password:", passwordField));
@@ -49,7 +60,6 @@ public class LoginPanel extends JFrame implements LoginView {
 
         pack();
         setLocationRelativeTo(null);
-
     }
 
     public void onLogin() {
@@ -73,14 +83,17 @@ public class LoginPanel extends JFrame implements LoginView {
         return panel;
     }
 
-    public void onLoginSuccess(String username) {
-        JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + username + "!");
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("state".equals(evt.getPropertyName())) {
+            final LoginState state = viewModel.getState();
 
-
-    }
-
-    public void onLoginFailure(String message) {
-        JOptionPane.showMessageDialog(this, message);
+            if (state.getErrorMessage() != null && !state.getErrorMessage().isEmpty()) {
+                JOptionPane.showMessageDialog(this, state.getErrorMessage(), "Login Error", JOptionPane.ERROR_MESSAGE);
+            } else if (state.getUsername() != null && !state.getUsername().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + state.getUsername() + "!");
+            }
+        }
     }
 
 }

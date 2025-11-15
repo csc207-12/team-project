@@ -4,10 +4,9 @@ import data_access.SupabaseUserRepository;
 import entity.User;
 import use_case.UserRepository;
 
-/**
- * Interactor for saving user style preferences.
- * Saves to in-memory repository first, then uploads complete profile to Supabase.
- */
+
+// Interactor for saving user style preferences.
+
 public class StyleInteractor implements StyleInputBoundary {
     private final UserRepository repository;
     private final StyleOutputBoundary presenter;
@@ -21,7 +20,7 @@ public class StyleInteractor implements StyleInputBoundary {
 
     @Override
     public void saveStylePreferences(StyleInputData input) {
-        // Retrieve the user from in-memory repository
+        // Retrieve user from in-memory repo
         User user = repository.findByUsername(input.getUsername());
 
         if (user == null) {
@@ -32,7 +31,7 @@ public class StyleInteractor implements StyleInputBoundary {
         // Update style preferences
         user.setStyle(input.getStylePreferences());
 
-        // This is the ONLY time data goes to Supabase - after all fields are filled
+        // Save user to database
         supabaseRepository.save(user);
 
         presenter.present(new StyleOutputData(true, "Style preferences saved successfully!", input.getUsername()));
