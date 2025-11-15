@@ -9,6 +9,7 @@ import java.awt.*;
 public class AdvicePanel extends JPanel {
 
     private final JTextArea textArea = new JTextArea(12, 24);
+    private final JButton outfitButton = new JButton("Get Outfit Suggestion");
 
     public AdvicePanel() {
         setLayout(new BorderLayout());
@@ -20,6 +21,14 @@ public class AdvicePanel extends JPanel {
 
         JScrollPane sp = new JScrollPane(textArea);
         add(sp, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(outfitButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public void setOutfitButtonAction(Runnable action) {
+        outfitButton.addActionListener(e -> action.run());
     }
 
     public void setAdviceText(String text) {
