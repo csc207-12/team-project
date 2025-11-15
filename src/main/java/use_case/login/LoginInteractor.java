@@ -1,6 +1,6 @@
 package use_case.login;
 
-import data_access.SupabaseUserRepository;
+import data_access.user_storage.SupabaseUserRepository;
 import entity.User;
 
 

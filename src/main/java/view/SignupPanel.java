@@ -4,7 +4,7 @@ import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
-import data_access.SupabaseUserRepository;
+import data_access.user_storage.SupabaseUserRepository;
 import use_case.signup.SignupInteractor;
 
 import javax.swing.*;
