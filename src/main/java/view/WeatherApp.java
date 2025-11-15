@@ -1,7 +1,6 @@
 package view;
 
-import interface_adapter.DailyForecastController;
-import interface_adapter.WeatherViewModel;
+import interface_adapter.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,14 +18,21 @@ public class WeatherApp extends JFrame {
 
     private final ForecastPanel forecastPanel = new ForecastPanel();
     private final AdvicePanel advicePanel = new AdvicePanel();
+    private final AccessoryPanel accessoryPanel = new AccessoryPanel();
+
+    private final JComboBox<String> purposeCombo = new JComboBox<>(
+            new String[]{"work","gym","travel","everyday","beach","date"}
+    );
 
     private final DailyForecastController controller;
+    private final AccessoryController accessoryController;
     private final WeatherViewModel viewModel;
 
-    public WeatherApp(DailyForecastController controller, WeatherViewModel viewModel) {
+    public WeatherApp(DailyForecastController controller, WeatherViewModel viewModel, AccessoryController accessoryController) {
         super("Weather");
         this.controller = controller;
         this.viewModel = viewModel;
+        this.accessoryController = accessoryController;
 
         initUI();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,11 +47,16 @@ public class WeatherApp extends JFrame {
         top.add(cityField);
         top.add(searchBtn);
         top.add(locationBtn);
+        top.add(new JLabel("Purpose:"));
+        top.add(purposeCombo);
 
-        // Center: left forecast grid + right advice
+        // Center: forecast + advice + accessories
         JPanel center = new JPanel(new BorderLayout());
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(advicePanel, BorderLayout.NORTH);
+        rightPanel.add(accessoryPanel, BorderLayout.CENTER);
         center.add(forecastPanel, BorderLayout.CENTER);
-        center.add(advicePanel, BorderLayout.EAST);
+        center.add(rightPanel, BorderLayout.EAST);
 
         // Bottom status
         JPanel bottom = new JPanel(new BorderLayout());
@@ -63,6 +74,13 @@ public class WeatherApp extends JFrame {
 
         locationBtn.addActionListener(e -> runInBackground(() -> {
             controller.useMyLocation();
+        }));
+
+        purposeCombo.addActionListener(e -> runInBackground(() -> {
+            String purpose = (String) purposeCombo.getSelectedItem();
+            String cityToUse = viewModel.getCity();
+            if (cityToUse == null || cityToUse.trim().isEmpty()) cityToUse = cityField.getText();
+            accessoryController.requestAccessories(cityToUse, purpose);
         }));
     }
 
@@ -104,13 +122,18 @@ public class WeatherApp extends JFrame {
         // Advice
         advicePanel.setAdviceText(viewModel.getAdviceText());
 
+        // Accessories
+        accessoryPanel.setAccessories(viewModel.getAccessories());
+
         // Status
         statusLabel.setText(viewModel.getStatusMessage());
     }
 
-    private void setControlsEnabled(boolean enabled) {
+    private void setControlsEnabled (boolean enabled){
         searchBtn.setEnabled(enabled);
         locationBtn.setEnabled(enabled);
         cityField.setEnabled(enabled);
+        purposeCombo.setEnabled(enabled);
     }
 }
+

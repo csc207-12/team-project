@@ -35,6 +35,8 @@ public class WeatherViewModel {
     private String statusMessage = ""; // e.g., "OK" / error message
     private boolean success = true;
 
+    private List<String> accessories = new ArrayList<>();
+
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city != null ? city : ""; }
 
@@ -46,6 +48,11 @@ public class WeatherViewModel {
     public String getAdviceText() { return adviceText; }
     public void setAdviceText(String adviceText) {
         this.adviceText = adviceText != null ? adviceText : "";
+    }
+
+    public List<String> getAccessories() { return accessories; }
+    public void setAccessories(List<String> accessories) {
+        this.accessories = (accessories != null) ? accessories : new ArrayList<>();
     }
 
     public String getStatusMessage() { return statusMessage; }

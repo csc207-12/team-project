@@ -23,8 +23,16 @@ public class Main {
         // Controller
         DailyForecastController controller = new DailyForecastController(interactor, viewModel);
 
+        // Accessory
+        use_case.AccessoryService accessoryService = new interface_adapter.RuleBasedAccessoryService();
+        interface_adapter.AccessoryPresenter accessoryPresenter = new interface_adapter.AccessoryPresenter(viewModel);
+        use_case.AccessoryInputBoundary accessoryInteractor = new use_case.AccessoryInteractor(
+                forecastGateway, locationService, accessoryService, accessoryPresenter
+        );
+        interface_adapter.AccessoryController accessoryController = new interface_adapter.AccessoryController(accessoryInteractor);
+
         // View (Swing)
-        WeatherApp app = new WeatherApp(controller, viewModel);
+        WeatherApp app = new WeatherApp(controller, viewModel, accessoryController);
         app.setVisible(true);
     }
 }
