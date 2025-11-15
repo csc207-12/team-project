@@ -1,4 +1,4 @@
-package data_access;
+package data_access.user_storage;
 
 import entity.User;
 import java.util.HashMap;

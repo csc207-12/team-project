@@ -1,4 +1,4 @@
-package data_access;
+package data_access.user_storage;
 
 // manages the current user that is logged in
 // singleton class to ensure only one instance of current user exists
