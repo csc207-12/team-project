@@ -6,6 +6,8 @@ import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionView
 import use_case.multiple_outfit_suggestion.MultipleOutfitSuggestionInteractor;
 import use_case.UserRepository;
 import data_access.multiple_outfit_suggestion.MultipleOutfitSuggestionDataAccessObject;
+import data_access.UserSession;
+import entity.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,8 +21,6 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
 
     private final MultipleOutfitSuggestionController controller;
 
-    private final JTextField usernameField = new JTextField(20);
-    private final JTextField locationField = new JTextField(20);
     private final JSpinner numberOfSuggestionsSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 10, 1));
     private final JButton getSuggestionsButton = new JButton("Get Multiple Suggestions");
     private final JTextArea suggestionsArea = new JTextArea(20, 50);
@@ -62,10 +62,6 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
         mainPanel.add(Box.createVerticalStrut(20));
 
         // Input fields
-        mainPanel.add(createFieldPanel("Username:", usernameField));
-        mainPanel.add(Box.createVerticalStrut(10));
-        mainPanel.add(createFieldPanel("Location:", locationField));
-        mainPanel.add(Box.createVerticalStrut(10));
         mainPanel.add(createFieldPanel("# of Suggestions:", numberOfSuggestionsSpinner));
         mainPanel.add(Box.createVerticalStrut(15));
 
@@ -123,14 +119,26 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
     }
 
     private void onGetSuggestions() {
-        String username = usernameField.getText().trim();
-        String location = locationField.getText().trim();
+        // Get the currently logged-in user from UserSession
+        User currentUser = UserSession.getInstance().getCurrentUser();
+
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this,
+                    "You must be logged in to get outfit suggestions. Please log in first.",
+                    "Not Logged In",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Get username and location from the logged-in user
+        String username = currentUser.getName();
+        String location = currentUser.getLocation();
         int numberOfSuggestions = (Integer) numberOfSuggestionsSpinner.getValue();
 
-        if (username.isEmpty() || location.isEmpty()) {
+        if (location == null || location.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Please enter both username and location",
-                    "Missing Information",
+                    "Your profile doesn't have a location set. Please update your profile.",
+                    "Missing Location",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
