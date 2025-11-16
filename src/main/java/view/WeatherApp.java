@@ -6,6 +6,7 @@ import interface_adapter.WeatherViewModel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import data_access.*;
 
 /**
  * WeatherApp: main window composed of top controls + forecast grid + advice panel.
@@ -23,10 +24,14 @@ public class WeatherApp extends JFrame {
     private final DailyForecastController controller;
     private final WeatherViewModel viewModel;
 
+    private final GeminiClient geminiClient;
+
+
     public WeatherApp(DailyForecastController controller, WeatherViewModel viewModel) {
         super("Weather");
         this.controller = controller;
         this.viewModel = viewModel;
+        this.geminiClient = new GeminiClient(WeatherAPIConfig.GEMINI_API_KEY);
 
         initUI();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,6 +69,29 @@ public class WeatherApp extends JFrame {
         locationBtn.addActionListener(e -> runInBackground(() -> {
             controller.useMyLocation();
         }));
+
+        advicePanel.setOutfitButtonAction(() -> {
+            StringBuilder sb = new StringBuilder();
+            int i = 1;
+            for (WeatherViewModel.SlotView slot : viewModel.getTodaySlots()) {
+                sb.append(i).append(". ")
+                        .append(slot.label).append(" | ")
+                        .append(slot.tempText).append(" | ")
+                        .append(slot.descText).append(" | ")
+                        .append(slot.precipText).append(" | ")
+                        .append(slot.windText).append("\n");
+                i++;
+            }
+            String context = sb.toString();
+
+            String rawPrompt = PromptLoader.loadPrompt("prompt.txt");
+            String prompt = String.format(rawPrompt, context);
+
+            String aiResult = geminiClient.generateText(prompt);
+
+            advicePanel.setAdviceText(aiResult);
+        });
+
     }
 
     /** Run controller call in background, then refresh UI from ViewModel on EDT. */
