@@ -1,4 +1,4 @@
-package data_access;
+package data_access.user_storage;
 
 public class SupabaseConfig {
     public static final String SUPABASE_URL = "https://ckvhnhuesfgjfiuiwhmj.supabase.co";

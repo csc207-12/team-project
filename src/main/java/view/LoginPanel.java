@@ -1,6 +1,6 @@
 package view;
 
-import data_access.UserSession;
+import data_access.user_storage.UserSession;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginState;
@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 public class LoginPanel extends JFrame implements PropertyChangeListener {
     private final LoginController controller;
     private final LoginViewModel viewModel;
+    private Runnable onLoginSuccessCallback;
 
     private final JTextField usernameField = new JTextField(20);
     private final JPasswordField passwordField = new JPasswordField(20);
@@ -61,6 +62,10 @@ public class LoginPanel extends JFrame implements PropertyChangeListener {
         pack();
         setLocationRelativeTo(null);
     }
+    public void setOnLoginSuccess(Runnable callback) {
+        this.onLoginSuccessCallback = callback;
+    }
+
 
     public void onLogin() {
         String username = usernameField.getText();
@@ -90,11 +95,18 @@ public class LoginPanel extends JFrame implements PropertyChangeListener {
 
             if (state.getErrorMessage() != null && !state.getErrorMessage().isEmpty()) {
                 JOptionPane.showMessageDialog(this, state.getErrorMessage(), "Login Error", JOptionPane.ERROR_MESSAGE);
+
+
             } else if (state.getUsername() != null && !state.getUsername().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Login successful! Welcome, " + state.getUsername() + "!");
                 if (state.getUser() != null) {
                     // Store user in UserSession
                     UserSession.getInstance().setCurrentUser(state.getUser());
+                }
+
+                // Execute callback if set (notify Main that login succeeded)
+                if (onLoginSuccessCallback != null) {
+                    onLoginSuccessCallback.run();
                 }
                 dispose();
             }
