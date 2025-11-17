@@ -1,7 +1,13 @@
 package view;
 
+import data_access.ForecastAPIGatewayImpl;
+import data_access.LocationServiceImpl;
+import entity.User;
 import interface_adapter.DailyForecastController;
+import interface_adapter.DailyForecastPresenter;
+import interface_adapter.RuleBasedAdviceService;
 import interface_adapter.WeatherViewModel;
+import use_case.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,33 +29,54 @@ public class WeatherApp extends JFrame {
     private final DailyForecastController controller;
     private final WeatherViewModel viewModel;
 
-    public WeatherApp(DailyForecastController controller, WeatherViewModel viewModel) {
-        super("Weather");
-        this.controller = controller;
-        this.viewModel = viewModel;
+    public WeatherApp(User currentUser) {
 
-        initUI();
+        super("Weather");
+
+        //ViewModel
+        viewModel = new WeatherViewModel();
+
+        // Presenter
+        DailyForecastPresenter presenter = new DailyForecastPresenter(viewModel);
+
+        // Gateways & services
+        ForecastAPIGateway forecastGateway = new ForecastAPIGatewayImpl();
+        LocationService locationService = new LocationServiceImpl();
+        AdviceService adviceService = new RuleBasedAdviceService();
+
+        // Interactor (use case)
+        DailyForecastInputBoundary interactor =
+                new DailyForecastInteractor(forecastGateway, locationService, adviceService, presenter);
+
+        // Controller
+        controller = new DailyForecastController(interactor, viewModel);
+
+
+
+        initUI(currentUser);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
     }
 
-    private void initUI() {
+    private void initUI(User currentUser) {
         // Top controls
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(new JLabel("City:"));
-        top.add(cityField);
+        //top.add(cityField);
         top.add(searchBtn);
         top.add(locationBtn);
 
         // Center: left forecast grid + right advice
         JPanel center = new JPanel(new BorderLayout());
+        center.setPreferredSize(new Dimension(800, 500)); // Set preferred size (width, height)
         center.add(forecastPanel, BorderLayout.CENTER);
-        center.add(advicePanel, BorderLayout.EAST);
+        //center.add(advicePanel, BorderLayout.EAST);
 
         // Bottom status
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.add(statusLabel, BorderLayout.WEST);
+
 
         setLayout(new BorderLayout(6, 6));
         add(top, BorderLayout.NORTH);
@@ -58,7 +85,8 @@ public class WeatherApp extends JFrame {
 
         // Actions
         searchBtn.addActionListener(e -> runInBackground(() -> {
-            controller.searchByCity(cityField.getText());
+//            controller.searchByCity(cityField.getText());
+            controller.searchByCity(currentUser.getLocation().trim());
         }));
 
         locationBtn.addActionListener(e -> runInBackground(() -> {

@@ -22,7 +22,8 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
 
     // api urls
     private static final String WEATHER_API_BASE = "https://api.openweathermap.org/data/2.5/forecast";
-    private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent";
+    private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent";
+//    private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
     public OutfitSuggestionDataAccessObject() {
         this.client = new OkHttpClient();

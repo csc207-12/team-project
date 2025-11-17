@@ -58,13 +58,23 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
 
             JSONArray arr = root.getJSONArray("list"); // 3h forecast entries
 
-            // Collect today's entries
+            // Find the earliest available date in the forecast
+            LocalDate earliestDate = null;
+            if (arr.length() > 0) {
+                long firstDt = arr.getJSONObject(0).getLong("dt");
+                earliestDate = Instant.ofEpochSecond(firstDt).atOffset(zoneOffset).toLocalDate();
+            }
+
+            // Use the earliest available date (which should be today or the next available day)
+            LocalDate targetDate = earliestDate != null ? earliestDate : cityToday;
+
+            // Collect entries for the target date
             List<JSONObject> todays = new ArrayList<>();
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject item = arr.getJSONObject(i);
                 long dt = item.getLong("dt"); // Unix time (seconds)
                 LocalDateTime local = Instant.ofEpochSecond(dt).atOffset(zoneOffset).toLocalDateTime();
-                if (local.toLocalDate().equals(cityToday)) {
+                if (local.toLocalDate().equals(targetDate)) {
                     // Attach local datetime for later sorting/selection (store as string field)
                     item.put("_localHour", local.getHour());
                     item.put("_localDateTime", local.toString());
@@ -83,10 +93,10 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
             }
 
             //Pick 4 representative slots (closest to target hours)
-            ForecastSlot morning   = pickSlotForTargetHour(todays, zoneOffset, cityToday,  9, "Morning");
-            ForecastSlot afternoon = pickSlotForTargetHour(todays, zoneOffset, cityToday, 15, "Afternoon");
-            ForecastSlot evening   = pickSlotForTargetHour(todays, zoneOffset, cityToday, 19, "Evening");
-            ForecastSlot overnight = pickSlotForTargetHour(todays, zoneOffset, cityToday, 23, "Overnight");
+            ForecastSlot morning   = pickSlotForTargetHour(todays, zoneOffset, targetDate,  9, "Morning");
+            ForecastSlot afternoon = pickSlotForTargetHour(todays, zoneOffset, targetDate, 15, "Afternoon");
+            ForecastSlot evening   = pickSlotForTargetHour(todays, zoneOffset, targetDate, 19, "Evening");
+            ForecastSlot overnight = pickSlotForTargetHour(todays, zoneOffset, targetDate, 23, "Overnight");
 
             List<ForecastSlot> slots = new ArrayList<>();
             if (morning != null)   slots.add(morning);
@@ -95,7 +105,7 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
             if (overnight != null) slots.add(overnight);
 
             // 5) Build domain entity & make advice
-            DailyForecast forecast = new DailyForecast(resolvedCity, cityToday, slots);
+            DailyForecast forecast = new DailyForecast(resolvedCity, targetDate, slots);
             String advice = adviceService.makeAdvice(forecast);
 
             // 6) Convert to OutputData (Presenter will format for UI)
