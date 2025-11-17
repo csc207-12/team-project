@@ -1,6 +1,6 @@
 package view;
 
-import interface_adapter.WeatherViewModel;
+import interface_adapter.weather.WeatherViewModel;
 
 import javax.swing.*;
 import java.awt.*;

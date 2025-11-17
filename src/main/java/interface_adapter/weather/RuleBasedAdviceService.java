@@ -1,8 +1,8 @@
-package interface_adapter;
+package interface_adapter.weather;
 
 import entity.DailyForecast;
 import entity.ForecastSlot;
-import use_case.AdviceService;
+import use_case.weather.AdviceService;
 
 import java.util.Comparator;
 import java.util.Locale;

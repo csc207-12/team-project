@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.weather;
 
 import java.util.ArrayList;
 import java.util.List;

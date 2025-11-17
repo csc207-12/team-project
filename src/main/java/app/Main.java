@@ -4,6 +4,7 @@ import data_access.user_storage.UserSession;
 import entity.User;
 import view.LoginPanel;
 import view.OutfitSuggestionPanel;
+import view.WeatherApp;
 
 public class Main {
 
@@ -20,6 +21,10 @@ public class Main {
             // For example, launch weather app with currentUser
             OutfitSuggestionPanel outfitPanel = new OutfitSuggestionPanel(currentUser);
             outfitPanel.setVisible(true);
+
+            WeatherApp weatherApp = new WeatherApp(currentUser);
+            weatherApp.setVisible(true);
+
         });
 
         loginPanel.setVisible(true);

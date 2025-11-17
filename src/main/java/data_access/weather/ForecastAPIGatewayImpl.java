@@ -1,6 +1,6 @@
-package data_access;
+package data_access.weather;
 
-import use_case.ForecastAPIGateway;
+import use_case.weather.ForecastAPIGateway;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;

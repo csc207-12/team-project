@@ -51,8 +51,8 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
 
         // input field (just location cuz user is already logged in)
 
-        mainPanel.add(createFieldPanel("Location:", locationField));
-        mainPanel.add(Box.createVerticalStrut(15));
+//        mainPanel.add(createFieldPanel("Location:", locationField));
+//        mainPanel.add(Box.createVerticalStrut(15));
 
         // button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -77,6 +77,7 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         JScrollPane scrollPane = new JScrollPane(suggestionsArea);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(350, 450));
 
         add(mainPanel, BorderLayout.CENTER);
 
@@ -86,6 +87,7 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         statusLabel.setFont(new Font("Arial", Font.ITALIC, 12));
         bottomPanel.add(statusLabel, BorderLayout.WEST);
         add(bottomPanel, BorderLayout.SOUTH);
+
 
         pack();
         setLocationRelativeTo(null);
@@ -102,7 +104,9 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
     }
 
     private void onGetSuggestions() {
-        String location = locationField.getText().trim();
+//        String location = locationField.getText().trim();
+
+        String location = currentUser.getLocation().trim();
 
         if ( location.isEmpty()) {
             JOptionPane.showMessageDialog(this,

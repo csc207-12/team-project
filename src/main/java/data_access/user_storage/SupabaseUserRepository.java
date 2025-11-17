@@ -2,7 +2,7 @@ package data_access.user_storage;
 
 import entity.User;
 import org.json.JSONArray;
-import use_case.UserRepository;
+import use_case.weather.UserRepository;
 import okhttp3.*;
 
 

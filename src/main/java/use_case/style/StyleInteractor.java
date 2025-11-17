@@ -3,7 +3,7 @@ package use_case.style;
 import data_access.user_storage.PendingUserStorage;
 import data_access.user_storage.SupabaseUserRepository;
 import entity.User;
-import use_case.UserRepository;
+import use_case.weather.UserRepository;
 
 
 // Interactor for saving user style preferences.
