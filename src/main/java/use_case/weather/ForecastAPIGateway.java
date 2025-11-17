@@ -1,4 +1,4 @@
-package use_case;
+package use_case.weather;
 
 /**
  * Gateway abstraction to fetch "5 day / 3 hour" forecast JSON.

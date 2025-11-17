@@ -2,8 +2,6 @@ package app;
 
 import data_access.user_storage.UserSession;
 import entity.User;
-import interface_adapter.DailyForecastPresenter;
-import interface_adapter.WeatherViewModel;
 import view.LoginPanel;
 import view.OutfitSuggestionPanel;
 import view.WeatherApp;

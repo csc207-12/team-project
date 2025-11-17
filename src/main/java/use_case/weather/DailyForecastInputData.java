@@ -1,4 +1,4 @@
-package use_case;
+package use_case.weather;
 
 /**
  * Input data for the "get today's daily forecast" use case.

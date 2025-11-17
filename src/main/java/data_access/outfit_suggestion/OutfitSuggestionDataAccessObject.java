@@ -1,6 +1,6 @@
 package data_access.outfit_suggestion;
 
-import data_access.WeatherAPIConfig;
+import data_access.weather.WeatherAPIConfig;
 import entity.User;
 import entity.DailyForecast;
 import entity.ForecastSlot;

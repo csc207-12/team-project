@@ -1,8 +1,8 @@
-package interface_adapter;
+package interface_adapter.weather;
 
-import use_case.DailyForecastOutputBoundary;
-import use_case.DailyForecastOutputData;
-import use_case.SlotDTO;
+import use_case.weather.DailyForecastOutputBoundary;
+import use_case.weather.DailyForecastOutputData;
+import use_case.weather.SlotDTO;
 
 import java.util.ArrayList;
 import java.util.List;

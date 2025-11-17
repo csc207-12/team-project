@@ -1,4 +1,4 @@
-package use_case;
+package use_case.weather;
 
 /**
  * SlotDTO: use-case level data for a single time-slot.

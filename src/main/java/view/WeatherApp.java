@@ -1,13 +1,13 @@
 package view;
 
-import data_access.ForecastAPIGatewayImpl;
-import data_access.LocationServiceImpl;
+import data_access.weather.ForecastAPIGatewayImpl;
+import data_access.weather.LocationServiceImpl;
 import entity.User;
-import interface_adapter.DailyForecastController;
-import interface_adapter.DailyForecastPresenter;
-import interface_adapter.RuleBasedAdviceService;
-import interface_adapter.WeatherViewModel;
-import use_case.*;
+import interface_adapter.weather.DailyForecastController;
+import interface_adapter.weather.DailyForecastPresenter;
+import interface_adapter.weather.RuleBasedAdviceService;
+import interface_adapter.weather.WeatherViewModel;
+import use_case.weather.*;
 
 import javax.swing.*;
 import java.awt.*;

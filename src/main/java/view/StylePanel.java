@@ -5,7 +5,7 @@ import interface_adapter.style.StylePresenter;
 import interface_adapter.style.StyleState;
 import interface_adapter.style.StyleViewModel;
 import use_case.style.StyleInteractor;
-import use_case.UserRepository;
+import use_case.weather.UserRepository;
 
 import javax.swing.*;
 import java.awt.*;

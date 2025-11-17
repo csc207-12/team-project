@@ -1,4 +1,4 @@
-package use_case;
+package use_case.weather;
 
 /**
  * Output boundary for daily forecast use case.

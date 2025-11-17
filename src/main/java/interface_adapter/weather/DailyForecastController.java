@@ -1,7 +1,7 @@
-package interface_adapter;
+package interface_adapter.weather;
 
-import use_case.DailyForecastInputBoundary;
-import use_case.DailyForecastInputData;
+import use_case.weather.DailyForecastInputBoundary;
+import use_case.weather.DailyForecastInputData;
 
 /**
  * Controller: validates raw input and delegates to the use case.

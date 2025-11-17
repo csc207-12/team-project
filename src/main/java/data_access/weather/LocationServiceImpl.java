@@ -1,7 +1,7 @@
-package data_access;
+package data_access.weather;
 
 import org.json.JSONObject;
-import use_case.LocationService;
+import use_case.weather.LocationService;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
