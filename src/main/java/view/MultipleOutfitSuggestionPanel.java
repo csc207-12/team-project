@@ -4,9 +4,8 @@ import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionCont
 import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionPresenter;
 import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionView;
 import use_case.multiple_outfit_suggestion.MultipleOutfitSuggestionInteractor;
-import use_case.UserRepository;
 import data_access.multiple_outfit_suggestion.MultipleOutfitSuggestionDataAccessObject;
-import data_access.UserSession;
+import data_access.user_storage.UserSession;
 import entity.User;
 
 import javax.swing.*;
@@ -26,12 +25,14 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
     private final JTextArea suggestionsArea = new JTextArea(20, 50);
     private final JLabel statusLabel = new JLabel(" ");
 
-    public MultipleOutfitSuggestionPanel(UserRepository userRepository) {
-        // Set up Clean Architecture components
+    public MultipleOutfitSuggestionPanel() {
+        // Get the currently logged-in user (following clean architecture like use case 3)
+        User currentUser = UserSession.getInstance().getCurrentUser();
+
         MultipleOutfitSuggestionPresenter presenter = new MultipleOutfitSuggestionPresenter(this);
         MultipleOutfitSuggestionDataAccessObject dataAccess = new MultipleOutfitSuggestionDataAccessObject();
         MultipleOutfitSuggestionInteractor interactor = new MultipleOutfitSuggestionInteractor(
-                userRepository,
+                currentUser,
                 dataAccess,
                 presenter
         );
