@@ -1,30 +1,52 @@
-import interface_adapter.*;
-import use_case.*;
-import view.WeatherApp;
-import data_access.*;
+package app;
+
+import data_access.user_storage.UserSession;
+import entity.User;
+import view.LoginPanel;
 
 public class Main {
+
     public static void main(String[] args) {
-        // ViewModel
-        WeatherViewModel viewModel = new WeatherViewModel();
+        LoginPanel loginPanel = new LoginPanel();
 
-        // Presenter
-        DailyForecastPresenter presenter = new DailyForecastPresenter(viewModel);
+        // callback to execute after a successful login
+        loginPanel.setOnLoginSuccess(() -> {
+            // Now UserSession has been populated with the logged-in user
+            User currentUser = UserSession.getInstance().getCurrentUser();
+            System.out.println("Login successful! Current user: " + currentUser.getName());
 
-        // Gateways & services
-        ForecastAPIGateway forecastGateway = new ForecastAPIGatewayImpl();
-        LocationService locationService = new LocationServiceImpl();
-        AdviceService adviceService = new RuleBasedAdviceService();
+            // TODO: Initialize and show the weather and gemini windows here
+            // For example, launch weather app with currentUser
+        });
 
-        // Interactor (use case)
-        DailyForecastInputBoundary interactor =
-                new DailyForecastInteractor(forecastGateway, locationService, adviceService, presenter);
+        loginPanel.setVisible(true);
 
-        // Controller
-        DailyForecastController controller = new DailyForecastController(interactor, viewModel);
+        // After successful login, the user is stored in UserSession (called a singleton class that only has one global instance)
+        // Access it at any point with: UserSession.getInstance().getCurrentUser()
 
-        // View (Swing)
-        WeatherApp app = new WeatherApp(controller, viewModel);
-        app.setVisible(true);
+//        SignupPanel signupPanel = new SignupPanel();
+//        signupPanel.setVisible(true);
+//
+//        // ViewModel
+//        WeatherViewModel viewModel = new WeatherViewModel();
+//
+//        // Presenter
+//        DailyForecastPresenter presenter = new DailyForecastPresenter(viewModel);
+//
+//        // Gateways & services
+//        ForecastAPIGateway forecastGateway = new ForecastAPIGatewayImpl();
+//        LocationService locationService = new LocationServiceImpl();
+//        AdviceService adviceService = new RuleBasedAdviceService();
+//
+//        // Interactor (use case)
+//        DailyForecastInputBoundary interactor =
+//                new DailyForecastInteractor(forecastGateway, locationService, adviceService, presenter);
+//
+//        // Controller
+//        DailyForecastController controller = new DailyForecastController(interactor, viewModel);
+//
+//        // View (Swing)
+//        WeatherApp app = new WeatherApp(controller, viewModel);
+//        app.setVisible(true);
     }
 }
