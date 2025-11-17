@@ -4,7 +4,7 @@ import interface_adapter.outfit_suggestion.OutfitSuggestionController;
 import interface_adapter.outfit_suggestion.OutfitSuggestionPresenter;
 import interface_adapter.outfit_suggestion.OutfitSuggestionView;
 import use_case.outfit_suggestion.OutfitSuggestionInteractor;
-import use_case.UserRepository;
+import entity.User;
 import data_access.outfit_suggestion.OutfitSuggestionDataAccessObject;
 
 import javax.swing.*;
@@ -14,25 +14,26 @@ import java.awt.*;
 public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionView {
 
     private final OutfitSuggestionController controller;
+    private final User currentUser;
 
-    private final JTextField usernameField = new JTextField(20);
     private final JTextField locationField = new JTextField(20);
     private final JButton getSuggestionsButton = new JButton("Get Outfit Suggestions");
     private final JTextArea suggestionsArea = new JTextArea(15, 40);
     private final JLabel statusLabel = new JLabel(" ");
 
-    public OutfitSuggestionPanel(UserRepository userRepository) {
+    public OutfitSuggestionPanel(User currentUser) {
+        this.currentUser = currentUser;
         // set up clean architecture components
         OutfitSuggestionPresenter presenter = new OutfitSuggestionPresenter(this);
         OutfitSuggestionDataAccessObject dataAccess = new OutfitSuggestionDataAccessObject();
         OutfitSuggestionInteractor interactor = new OutfitSuggestionInteractor(
-                userRepository,  // first parameter
+                currentUser,  // first parameter
                 dataAccess,      // second parameter
                 presenter        // third parameter
         );
         this.controller = new OutfitSuggestionController(interactor);
 
-        setTitle("Get Outfit Suggestions");
+        setTitle("Get Outfit Suggestions for " + currentUser.getName()); // personalized title
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -46,11 +47,10 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         headerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         headerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(headerLabel);
-        mainPanel.add(Box.createVerticalStrut(15));
-
-        // input fields
-        mainPanel.add(createFieldPanel("Username:", usernameField));
         mainPanel.add(Box.createVerticalStrut(10));
+
+        // input field (just location cuz user is already logged in)
+
         mainPanel.add(createFieldPanel("Location:", locationField));
         mainPanel.add(Box.createVerticalStrut(15));
 
@@ -102,12 +102,11 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
     }
 
     private void onGetSuggestions() {
-        String username = usernameField.getText().trim();
         String location = locationField.getText().trim();
 
-        if (username.isEmpty() || location.isEmpty()) {
+        if ( location.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                    "Please enter both username and location",
+                    "Please enter a location",
                     "Missing Information",
                     JOptionPane.WARNING_MESSAGE);
             return;
@@ -115,14 +114,14 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
 
         // disable button while loading
         getSuggestionsButton.setEnabled(false);
-        statusLabel.setText("Loading suggestions...");
+        statusLabel.setText("Loading suggestions for " + currentUser.getName() + " ... ");
         suggestionsArea.setText("");
 
         // run in background thread
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                controller.execute(username, location);
+                controller.execute(currentUser.getName(), location);
                 return null;
             }
 

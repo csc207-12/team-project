@@ -3,7 +3,6 @@ package use_case.outfit_suggestion;
 import entity.User;
 import entity.DailyForecast;
 import entity.ForecastSlot;
-import use_case.UserRepository;
 import java.util.List;
 
 /**
@@ -13,21 +12,21 @@ import java.util.List;
  */
 public class OutfitSuggestionInteractor implements OutfitSuggestionInputBoundary {
 
-    private final UserRepository userRepository;
+    private final User currentUser;
     private final OutfitSuggestionDataAccessInterface weatherAndAIAccess;
     private final OutfitSuggestionOutputBoundary presenter;
 
     /**
      * Constructor for OutfitSuggestionInteractor.
-     * @param userRepository the repository for getting user data
+     * @param currentUser the logged in user with their preferences
      * @param weatherAndAIAccess the data access for weather and AI suggestions
      * @param presenter the presenter for showing results to the user
      */
     public OutfitSuggestionInteractor(
-            UserRepository userRepository,
+            User currentUser,
             OutfitSuggestionDataAccessInterface weatherAndAIAccess,
             OutfitSuggestionOutputBoundary presenter) {
-        this.userRepository = userRepository;
+        this.currentUser = currentUser;
         this.weatherAndAIAccess = weatherAndAIAccess;
         this.presenter = presenter;
     }
@@ -39,13 +38,8 @@ public class OutfitSuggestionInteractor implements OutfitSuggestionInputBoundary
     @Override
     public void execute(OutfitSuggestionInputData inputData) {
         try {
-            // Step 1: Get the user's saved preferences from Supabase
-            User user = userRepository.findByUsername(inputData.getUsername());
-
-            if (user == null) {
-                presenter.prepareFailView("User not found. Please create a profile first.");
-                return;
-            }
+            // Step 1: Use the already-logged-in user (no database query needed!)
+            // The user object is passed in the constructor with all their preferences already loaded
 
             // Step 2: Get today's weather forecast for the location
             DailyForecast forecast = weatherAndAIAccess.getWeatherForecast(inputData.getLocation());
@@ -57,7 +51,7 @@ public class OutfitSuggestionInteractor implements OutfitSuggestionInputBoundary
 
             // Step 3: Generate outfit suggestions using the LLM
             // This combines user preferences (style, gender, etc.) with weather data
-            List<String> outfitSuggestions = weatherAndAIAccess.generateOutfitSuggestions(user, forecast);
+            List<String> outfitSuggestions = weatherAndAIAccess.generateOutfitSuggestions(currentUser, forecast);
 
             if (outfitSuggestions == null || outfitSuggestions.isEmpty()) {
                 presenter.prepareFailView("Could not generate outfit suggestions. Please try again.");
@@ -74,7 +68,7 @@ public class OutfitSuggestionInteractor implements OutfitSuggestionInputBoundary
 
             OutfitSuggestionOutputData outputData = new OutfitSuggestionOutputData(
                     suggestionsText,
-                    user.getName(),
+                    currentUser.getName(),
                     currentTemp,
                     forecast.getCity()
             );
