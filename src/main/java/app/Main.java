@@ -3,6 +3,7 @@ package app;
 import data_access.user_storage.UserSession;
 import entity.User;
 import view.LoginPanel;
+import view.OutfitSuggestionPanel;
 
 public class Main {
 
@@ -15,8 +16,10 @@ public class Main {
             User currentUser = UserSession.getInstance().getCurrentUser();
             System.out.println("Login successful! Current user: " + currentUser.getName());
 
-            // TODO: Initialize and show the weather and gemini windows here
+            // Initialize and show the weather and gemini windows here
             // For example, launch weather app with currentUser
+            OutfitSuggestionPanel outfitPanel = new OutfitSuggestionPanel(currentUser);
+            outfitPanel.setVisible(true);
         });
 
         loginPanel.setVisible(true);
