@@ -1,6 +1,6 @@
 package use_case.signup;
 
-import data_access.PendingUserStorage;
+import data_access.user_storage.PendingUserStorage;
 import entity.User;
 import use_case.UserRepository;
 

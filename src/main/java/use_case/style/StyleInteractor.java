@@ -1,7 +1,7 @@
 package use_case.style;
 
-import data_access.PendingUserStorage;
-import data_access.SupabaseUserRepository;
+import data_access.user_storage.PendingUserStorage;
+import data_access.user_storage.SupabaseUserRepository;
 import entity.User;
 import use_case.UserRepository;
 
