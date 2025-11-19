@@ -4,9 +4,9 @@ import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionCont
 import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionPresenter;
 import interface_adapter.multiple_outfit_suggestion.MultipleOutfitSuggestionView;
 import use_case.multiple_outfit_suggestion.MultipleOutfitSuggestionInteractor;
-import use_case.UserRepository;
+import use_case.weather.UserRepository;
 import data_access.multiple_outfit_suggestion.MultipleOutfitSuggestionDataAccessObject;
-import data_access.UserSession;
+import data_access.user_storage.UserSession;
 import entity.User;
 
 import javax.swing.*;
