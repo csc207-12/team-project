@@ -1,6 +1,6 @@
 package data_access.multiple_outfit_suggestion;
 
-import data_access.WeatherAPIConfig;
+import data_access.weather.WeatherAPIConfig;
 import data_access.outfit_suggestion.GeminiConfig;
 import entity.User;
 import entity.DailyForecast;
@@ -26,7 +26,7 @@ public class MultipleOutfitSuggestionDataAccessObject implements MultipleOutfitS
 
     // API URLs
     private static final String WEATHER_API_BASE = "https://api.openweathermap.org/data/2.5/forecast";
-    private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+    private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent";
 
     public MultipleOutfitSuggestionDataAccessObject() {
         this.client = new OkHttpClient();

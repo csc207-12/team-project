@@ -3,6 +3,7 @@ package app;
 import data_access.user_storage.UserSession;
 import entity.User;
 import view.LoginPanel;
+import view.MultipleOutfitSuggestionPanel;
 import view.OutfitSuggestionPanel;
 import view.WeatherApp;
 
@@ -21,6 +22,9 @@ public class Main {
             // For example, launch weather app with currentUser
             OutfitSuggestionPanel outfitPanel = new OutfitSuggestionPanel(currentUser);
             outfitPanel.setVisible(true);
+
+            MultipleOutfitSuggestionPanel multipleOutfitPanel = new MultipleOutfitSuggestionPanel();
+            multipleOutfitPanel.setVisible(true);
 
             WeatherApp weatherApp = new WeatherApp(currentUser);
             weatherApp.setVisible(true);
