@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 
 // panel for getting personalized outfit suggestions
-public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionView {
+public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionView {
 
     private final OutfitSuggestionController controller;
     private final User currentUser;
@@ -33,8 +33,6 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         );
         this.controller = new OutfitSuggestionController(interactor);
 
-        setTitle("Get Outfit Suggestions for " + currentUser.getName()); // personalized title
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // create main panel
@@ -53,6 +51,22 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
 
 //        mainPanel.add(createFieldPanel("Location:", locationField));
 //        mainPanel.add(Box.createVerticalStrut(15));
+
+
+
+        final Button getMoreOutfitSuggestionsButton = new Button("Get More Outfit Suggestions");
+        JPanel buttonPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        getMoreOutfitSuggestionsButton.setFont(new Font("Arial", Font.BOLD, 14));
+        getMoreOutfitSuggestionsButton.addActionListener(e -> {
+            MultipleOutfitSuggestionPanel multipleOutfitSuggestionPanel = new MultipleOutfitSuggestionPanel();
+            multipleOutfitSuggestionPanel.setVisible(true);
+                });
+        buttonPanel1.setAlignmentX(Component.LEFT_ALIGNMENT);
+        buttonPanel1.add(getMoreOutfitSuggestionsButton);
+        mainPanel.add(buttonPanel1);
+        mainPanel.add(Box.createVerticalStrut(15));
+
+
 
         // button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -87,10 +101,6 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         statusLabel.setFont(new Font("Arial", Font.ITALIC, 12));
         bottomPanel.add(statusLabel, BorderLayout.WEST);
         add(bottomPanel, BorderLayout.SOUTH);
-
-
-        pack();
-        setLocationRelativeTo(null);
     }
 
     private JPanel createFieldPanel(String labelText, JComponent field) {

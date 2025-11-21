@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/java/view/ApplicationPanel.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/java/view/ApplicationPanel.java" />
+              <option name="originalContent" value="package view;&#10;&#10;import entity.User;&#10;&#10;import javax.swing.*;&#10;import java.awt.*;&#10;&#10;public class ApplicationPanel extends JFrame {&#10;&#10;    public ApplicationPanel(User currentUser)  {&#10;&#10;        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);&#10;        setLayout(new BorderLayout());&#10;&#10;        // create main panel&#10;        JPanel appPanel = new JPanel();&#10;        appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.X_AXIS));&#10;&#10;        WeatherApp weatherApp = new WeatherApp(currentUser);&#10;        weatherApp.setVisible(true);&#10;        OutfitSuggestionPanel outfitSuggestionPanel = new OutfitSuggestionPanel(currentUser);&#10;        outfitSuggestionPanel.setVisible(true);&#10;&#10;        appPanel.add(weatherApp);&#10;        appPanel.add(Box.createHorizontalStrut(20)); // space between panels&#10;        appPanel.add(outfitSuggestionPanel);&#10;        appPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));&#10;&#10;        add(appPanel, BorderLayout.CENTER);&#10;        pack();&#10;        setLocationRelativeTo(null);&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="package view;&#10;&#10;import entity.User;&#10;&#10;import javax.swing.*;&#10;import java.awt.*;&#10;&#10;public class ApplicationPanel extends JFrame {&#10;&#10;    public ApplicationPanel(User currentUser)  {&#10;&#10;        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);&#10;        setLayout(new BorderLayout());&#10;&#10;        // create main panel&#10;        JPanel appPanel = new JPanel();&#10;        appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.X_AXIS));&#10;&#10;        WeatherApp weatherApp = new WeatherApp(currentUser);&#10;        OutfitSuggestionPanel outfitSuggestionPanel = new OutfitSuggestionPanel(currentUser);&#10;&#10;        appPanel.add(weatherApp);&#10;        appPanel.add(Box.createHorizontalStrut(20)); // space between panels&#10;        appPanel.add(outfitSuggestionPanel);&#10;        appPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));&#10;&#10;        add(appPanel, BorderLayout.CENTER);&#10;        pack();&#10;        setLocationRelativeTo(null);&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
