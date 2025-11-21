@@ -9,6 +9,7 @@ import interface_adapter.weather.RuleBasedAdviceService;
 import interface_adapter.weather.WeatherViewModel;
 import use_case.weather.*;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -21,6 +22,7 @@ public class WeatherApp extends JFrame {
     private final JTextField cityField = new JTextField(16);
     private final JButton searchBtn = new JButton("Search Weather");
     private final JButton locationBtn = new JButton("Use My Location");
+    private final JButton purposeBtn = new JButton("Purpose");
     private final JLabel statusLabel = new JLabel(" ");
 
     private final ForecastPanel forecastPanel = new ForecastPanel();
@@ -66,6 +68,7 @@ public class WeatherApp extends JFrame {
         //top.add(cityField);
         top.add(searchBtn);
         top.add(locationBtn);
+        top.add(purposeBtn);
 
         // Center: left forecast grid + right advice
         JPanel center = new JPanel(new BorderLayout());
@@ -92,6 +95,11 @@ public class WeatherApp extends JFrame {
         locationBtn.addActionListener(e -> runInBackground(() -> {
             controller.useMyLocation();
         }));
+
+        purposeBtn.addActionListener(e -> {
+            PurposePanel purposePanel = new PurposePanel();
+            purposePanel.setVisible(true);
+        });
     }
 
     /** Run controller call in background, then refresh UI from ViewModel on EDT. */

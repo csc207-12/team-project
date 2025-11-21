@@ -1,6 +1,6 @@
 package data_access.multiple_outfit_suggestion;
 
-import data_access.WeatherAPIConfig;
+import data_access.weather.WeatherAPIConfig;
 import data_access.outfit_suggestion.GeminiConfig;
 import entity.User;
 import entity.DailyForecast;

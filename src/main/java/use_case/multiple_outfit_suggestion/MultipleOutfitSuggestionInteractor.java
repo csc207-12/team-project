@@ -3,6 +3,7 @@ package use_case.multiple_outfit_suggestion;
 import entity.User;
 import entity.DailyForecast;
 import entity.ForecastSlot;
+import use_case.weather.UserRepository;
 import java.util.List;
 
 /**
