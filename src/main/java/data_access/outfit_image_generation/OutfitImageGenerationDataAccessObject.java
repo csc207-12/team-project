@@ -1,5 +1,6 @@
 package data_access.outfit_image_generation;
 
+import data_access.outfit_suggestion.GeminiConfig;
 import entity.User;
 import okhttp3.*;
 import org.json.JSONArray;
@@ -20,8 +21,7 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
     private static final String API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent";
 
-    private static final String API_KEY =
-            "AIzaSyDoMBgL3UfT3bC3LbDP9gGK8BKzvXdyn7Q";
+    private static final String API_KEY = GeminiConfig.API_KEY;
 
     private final OkHttpClient client = new OkHttpClient();
     private final User user;
