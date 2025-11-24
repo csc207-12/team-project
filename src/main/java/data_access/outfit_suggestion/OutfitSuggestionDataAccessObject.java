@@ -209,7 +209,8 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
         prompt.append("Factor in colour and what combinations of clothing + colour go well together. If nessecary " +
                 "mention what colour the clothing piece(s) should be for a better outfit.\n");
         prompt.append("For example:\n");
-        prompt.append("Outfit:\n- Blue jeans\n- White t-shirt\n- Light jacket\nWhy: The light jacket is perfect for the mild temperature and potential wind.\n\n");
+        prompt.append("Outfit:\n- Blue jeans\n- White t-shirt\n- Light jacket\nWhy: The light jacket is " +
+                "perfect for the mild temperature and potential wind.\n\n");
 
         return prompt.toString();
     }

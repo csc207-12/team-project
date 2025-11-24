@@ -81,16 +81,7 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
                         .replace("•", "")
                         .trim();
                 results.add(clothingLine);
-                continue;
             }
-//            String[] lines = block.split("\n");
-//            String fallback = lines[0].trim();
-//
-//            if (fallback.length() < 5) {
-//                fallback = "T-shirt, jeans, hoodie, sneakers";
-//            }
-//
-//            results.add(fallback);
         }
 
         return results;
