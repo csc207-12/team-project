@@ -50,13 +50,16 @@ public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionVie
 
         // button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton getSuggestionsButton = new JButton("Get Outfit Suggestions");
-        getSuggestionsButton.setFont(new Font("Arial", Font.BOLD, 14));
-        getSuggestionsButton.addActionListener(e -> onGetSuggestions(getSuggestionsButton));
+        JButton getMoreSuggestions = new JButton("Get More Suggestions");
+        getMoreSuggestions.setFont(new Font("Arial", Font.BOLD, 14));
+        getMoreSuggestions.addActionListener(e -> {
+            MultipleOutfitSuggestionPanel multiplePanel = new MultipleOutfitSuggestionPanel();
+            multiplePanel.setVisible(true);
+        });
         JButton generateImagesButton = new JButton("Generate Outfit Images");
         generateImagesButton.setFont(new Font("Arial", Font.BOLD, 14));
         generateImagesButton.addActionListener(e -> openImageGallery());
-        buttonPanel.add(getSuggestionsButton);
+        buttonPanel.add(getMoreSuggestions);
         buttonPanel.add(generateImagesButton);
         add(buttonPanel, BorderLayout.NORTH);
 
@@ -75,10 +78,12 @@ public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionVie
         JPanel statusPanel = new JPanel(new BorderLayout());
         statusPanel.add(statusLabel, BorderLayout.WEST);
         add(statusPanel, BorderLayout.SOUTH);
+
+        // Automatically load outfit suggestions when panel is created
+        loadOutfitSuggestions();
     }
 
-    private void onGetSuggestions(JButton button) {
-        button.setEnabled(false);
+    private void loadOutfitSuggestions() {
         statusLabel.setText("Loading...");
 
         new SwingWorker<Void, Void>() {
@@ -90,7 +95,7 @@ public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionVie
 
             @Override
             protected void done() {
-                button.setEnabled(true);
+                // Task completed
             }
         }.execute();
     }
