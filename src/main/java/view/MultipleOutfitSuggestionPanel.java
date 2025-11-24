@@ -169,6 +169,7 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
     @Override
     public void onMultipleOutfitSuggestionSuccess(List<String> suggestions, String username,
                                                   double temperature, String city) {
+        int numberOfSuggestions = (Integer) numberOfSuggestionsSpinner.getValue();
         SwingUtilities.invokeLater(() -> {
             // Display the suggestions
             StringBuilder display = new StringBuilder();
@@ -187,11 +188,11 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
             }
 
             display.append("\n\n═══════════════════════════════════════════════════════\n");
-            display.append("Total suggestions: ").append(suggestions.size());
+            display.append("Total suggestions: ").append(numberOfSuggestions);
 
             suggestionsArea.setText(display.toString());
             suggestionsArea.setCaretPosition(0);
-            statusLabel.setText("Successfully loaded " + suggestions.size() + " suggestions!");
+            statusLabel.setText("Successfully loaded " + numberOfSuggestions + " suggestions!");
         });
     }
 
