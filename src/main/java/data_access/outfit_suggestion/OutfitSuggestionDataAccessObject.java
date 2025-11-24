@@ -168,7 +168,7 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
     private String buildPrompt(User user, DailyForecast forecast) {
         StringBuilder prompt = new StringBuilder();
 
-        prompt.append("You are a personal fashion stylist. Generate 3 outfit suggestions based on:\n\n");
+        prompt.append("You are a personal fashion stylist. Generate 1 outfit suggestion based on:\n\n");
 
         // user info
         prompt.append("User Profile:\n");
@@ -200,11 +200,16 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
         }
 
         // tell ai what to do
-        prompt.append("\nProvide 3 different outfit suggestions. For each outfit:\n");
+        prompt.append("\nProvide 1 outfit suggestion. For the outfit:\n");
         prompt.append("1. List specific clothing items from their preferences\n");
         prompt.append("2. Explain why it's suitable for the weather\n");
         prompt.append("3. Keep it practical and comfortable\n\n");
         prompt.append("Format each outfit as:\nOutfit [number]: [clothing items]\nWhy: [brief explanation]\n");
+        prompt.append("Print each clothing item on a new line in the format '- [clothing item]'\n");
+        prompt.append("Factor in colour and what combinations of clothing + colour go well together. If nessecary " +
+                "mention what colour the clothing piece(s) should be for a better outfit.\n");
+        prompt.append("For example:\n");
+        prompt.append("Outfit:\n- Blue jeans\n- White t-shirt\n- Light jacket\nWhy: The light jacket is perfect for the mild temperature and potential wind.\n\n");
 
         return prompt.toString();
     }

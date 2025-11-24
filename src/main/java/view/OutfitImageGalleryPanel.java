@@ -66,13 +66,15 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
         imageGrid.revalidate();
         imageGrid.repaint();
 
-        new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                controller.generateImages(outfits);
-                return null;
-            }
-        }.execute();
+        controller.generateImages(outfits);
+
+//        new SwingWorker<Void, Void>() {
+//            @Override
+//            protected Void doInBackground() {
+//                controller.generateImages(outfits);
+//                return null;
+//            }
+//        }.execute();
     }
 
     @Override

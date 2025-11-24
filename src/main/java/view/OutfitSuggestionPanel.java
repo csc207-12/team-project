@@ -104,17 +104,21 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
     private java.util.List<String> parseOutfits(String suggestions) {
         java.util.List<String> results = new java.util.ArrayList<>();
 
-        String[] blocks = suggestions.split("\\*\\*Outfit [0-9]+:\\*\\*");
+        // Split suggestions between outfits and why
+         String[] blocks = suggestions.split("(?=Outfit:)");
+         for (String block : blocks) {
+             if (block.contains("Why:")) {
+                 String outfit = block.substring(0, block.indexOf("Why:")).trim();
+                 results.add(outfit);
+             }
+         }
 
-        for (int i = 1; i < blocks.length; i++) {
-            String b = blocks[i].trim();
+        for (String block : blocks) {
+            String trimmed = block.trim();
 
-            if (i < blocks.length - 1) {
-                b = b.split("\\*\\*Outfit")[0].trim();
-            }
-
-            if (!b.isBlank()) {
-                results.add("Outfit " + i + "\n" + b);
+            // Skip empty blocks and the weather header
+            if (!trimmed.isBlank() && trimmed.startsWith("Outfit")) {
+                results.add(trimmed);
             }
         }
 
