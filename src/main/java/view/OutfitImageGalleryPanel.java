@@ -37,7 +37,7 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
 
         setTitle("Outfit Image Gallery");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
+//        setLayout(new BorderLayout(10, 10));
 
         generateButton.addActionListener(e -> requestImages());
         add(generateButton, BorderLayout.NORTH);
@@ -51,7 +51,7 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
         statusPanel.add(statusLabel, BorderLayout.WEST);
         add(statusPanel, BorderLayout.SOUTH);
 
-        setSize(1000, 700);
+        setSize(420, 500);
         setLocationRelativeTo(null);
     }
 
@@ -66,15 +66,14 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
         imageGrid.revalidate();
         imageGrid.repaint();
 
-        controller.generateImages(outfits);
 
-//        new SwingWorker<Void, Void>() {
-//            @Override
-//            protected Void doInBackground() {
-//                controller.generateImages(outfits);
-//                return null;
-//            }
-//        }.execute();
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                controller.generateImages(outfits);
+                return null;
+            }
+        }.execute();
     }
 
     @Override

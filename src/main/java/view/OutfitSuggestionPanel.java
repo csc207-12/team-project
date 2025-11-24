@@ -10,7 +10,7 @@ import data_access.outfit_suggestion.OutfitSuggestionDataAccessObject;
 import javax.swing.*;
 import java.awt.*;
 
-public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionView {
+public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionView {
 
     private final OutfitSuggestionController controller;
     private final User currentUser;
@@ -29,8 +29,6 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         );
         this.controller = new OutfitSuggestionController(interactor);
 
-        setTitle("Get Outfit Suggestions for " + currentUser.getName()); // personalized title
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // create main panel
@@ -77,9 +75,6 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         JPanel statusPanel = new JPanel(new BorderLayout());
         statusPanel.add(statusLabel, BorderLayout.WEST);
         add(statusPanel, BorderLayout.SOUTH);
-
-        pack();
-        setLocationRelativeTo(null);
     }
 
     private void onGetSuggestions(JButton button) {
