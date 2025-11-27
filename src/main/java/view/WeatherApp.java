@@ -56,6 +56,8 @@ public class WeatherApp extends JPanel {
 
 
         initUI(currentUser);
+
+        runInBackground(controller::useMyLocation);
     }
 
     private void initUI(User currentUser) {
