@@ -13,7 +13,7 @@ import java.awt.*;
 // Views create their own dependencies internally
 public class AppBuilder {
 
-    private LoginPanel loginView;
+    private static LoginPanel loginView;
 
     public AppBuilder addLoginView() {
         loginView = new LoginPanel();
@@ -36,6 +36,11 @@ public class AppBuilder {
             });
         }
         return this;
+    }
+
+    // Get the login view instance (used by StylePanel to return to login after signup)
+    public static LoginPanel getLoginView() {
+        return loginView;
     }
 
     // Build the main application frame with WeatherApp and OutfitSuggestionPanel
