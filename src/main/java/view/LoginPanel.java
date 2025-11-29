@@ -1,11 +1,13 @@
 package view;
 
+import data_access.user_storage.SupabaseUserRepository;
 import data_access.user_storage.UserSession;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import use_case.login.LoginInteractor;
+import data_access.user_storage.UserRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +27,8 @@ public class LoginPanel extends JFrame implements PropertyChangeListener {
     public LoginPanel() {
         this.viewModel = new LoginViewModel();
         LoginPresenter presenter = new LoginPresenter(viewModel);
-        LoginInteractor interactor = new LoginInteractor(presenter);
+        UserRepository userRepository = new SupabaseUserRepository();
+        LoginInteractor interactor = new LoginInteractor(presenter, userRepository);
         this.controller = new LoginController(interactor);
 
         viewModel.addPropertyChangeListener(this);
