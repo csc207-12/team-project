@@ -1,15 +1,17 @@
 package use_case.login;
 
-import data_access.user_storage.SupabaseUserRepository;
 import entity.User;
+import data_access.user_storage.UserRepository;
 
 
 // Interactor for handling user login
 public class LoginInteractor implements LoginInputBoundary{
     private final LoginOutputBoundary outputBoundary;
+    private final UserRepository userRepository;
 
-    public LoginInteractor(LoginOutputBoundary outputBoundary) {
+    public LoginInteractor(LoginOutputBoundary outputBoundary, UserRepository userRepository) {
         this.outputBoundary = outputBoundary;
+        this.userRepository = userRepository;
     }
 
     public void login(LoginInputData inputData) {
@@ -27,7 +29,6 @@ public class LoginInteractor implements LoginInputBoundary{
     }
 
     private User authenticate(String username, String password) {
-        SupabaseUserRepository userRepository = new SupabaseUserRepository();
         User possibleuser = userRepository.findByUsername(username);
         if (possibleuser == null) {
             return null;

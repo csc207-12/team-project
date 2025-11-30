@@ -1,9 +1,8 @@
 package use_case.style;
 
 import data_access.user_storage.PendingUserStorage;
-import data_access.user_storage.SupabaseUserRepository;
 import entity.User;
-import use_case.weather.UserRepository;
+import data_access.user_storage.UserRepository;
 
 
 // Interactor for saving user style preferences.
@@ -11,12 +10,10 @@ import use_case.weather.UserRepository;
 public class StyleInteractor implements StyleInputBoundary {
     private final UserRepository repository;
     private final StyleOutputBoundary presenter;
-    private final SupabaseUserRepository supabaseRepository;
 
     public StyleInteractor(UserRepository repository, StyleOutputBoundary presenter) {
         this.repository = repository;
         this.presenter = presenter;
-        this.supabaseRepository = new SupabaseUserRepository();
     }
 
     @Override
@@ -28,7 +25,7 @@ public class StyleInteractor implements StyleInputBoundary {
         user.setStyle(input.getStylePreferences());
 
         // Save user to database
-        supabaseRepository.save(user);
+        repository.save(user);
 
         // Remove from pending storage
         PendingUserStorage.getInstance().removePendingUser(input.getUsername());

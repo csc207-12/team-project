@@ -1,4 +1,4 @@
-package use_case.weather;
+package data_access.user_storage;
 
 import entity.User;
 
