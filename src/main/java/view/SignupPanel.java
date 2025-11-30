@@ -47,7 +47,7 @@ public class SignupPanel extends JFrame implements PropertyChangeListener {
         form.add(Box.createVerticalStrut(10));
         form.add(createFieldPanel("Password:", passwordField));
         form.add(Box.createVerticalStrut(10));
-        form.add(createFieldPanel("Location:", locationField));
+        form.add(createFieldPanel("City:", locationField));
         form.add(Box.createVerticalStrut(10));
         form.add(createFieldPanel("Gender:", genderBox));
 

@@ -69,9 +69,6 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
         // Button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         getSuggestionsButton.setFont(new Font("Arial", Font.BOLD, 14));
-        getSuggestionsButton.setBackground(new Color(70, 130, 180));
-        getSuggestionsButton.setForeground(Color.WHITE);
-        getSuggestionsButton.setFocusPainted(false);
         getSuggestionsButton.addActionListener(e -> onGetSuggestions());
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         buttonPanel.add(getSuggestionsButton);
@@ -168,6 +165,7 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
     @Override
     public void onMultipleOutfitSuggestionSuccess(List<String> suggestions, String username,
                                                   double temperature, String city) {
+        int numberOfSuggestions = (Integer) numberOfSuggestionsSpinner.getValue();
         SwingUtilities.invokeLater(() -> {
             // Display the suggestions
             StringBuilder display = new StringBuilder();
@@ -186,11 +184,11 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
             }
 
             display.append("\n\n═══════════════════════════════════════════════════════\n");
-            display.append("Total suggestions: ").append(suggestions.size());
+            display.append("Total suggestions: ").append(numberOfSuggestions);
 
             suggestionsArea.setText(display.toString());
             suggestionsArea.setCaretPosition(0);
-            statusLabel.setText("Successfully loaded " + suggestions.size() + " suggestions!");
+            statusLabel.setText("Successfully loaded " + numberOfSuggestions + " suggestions!");
         });
     }
 

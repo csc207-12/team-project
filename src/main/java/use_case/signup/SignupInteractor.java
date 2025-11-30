@@ -2,7 +2,7 @@ package use_case.signup;
 
 import data_access.user_storage.PendingUserStorage;
 import entity.User;
-import use_case.weather.UserRepository;
+import data_access.user_storage.UserRepository;
 
 
 // Interactor for user signup

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * WeatherApp: main window composed of top controls + forecast grid + advice panel.
  */
-public class WeatherApp extends JFrame {
+public class WeatherApp extends JPanel {
 
     private final JTextField cityField = new JTextField(16);
     private final JButton searchBtn = new JButton("Search Weather");
@@ -33,7 +33,7 @@ public class WeatherApp extends JFrame {
 
     public WeatherApp(User currentUser) {
 
-        super("Weather");
+//        super("Weather");
 
         //ViewModel
         viewModel = new WeatherViewModel();
@@ -56,9 +56,6 @@ public class WeatherApp extends JFrame {
 
 
         initUI(currentUser);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
     }
 
     private void initUI(User currentUser) {

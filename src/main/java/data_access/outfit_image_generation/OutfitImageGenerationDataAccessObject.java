@@ -33,7 +33,8 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
     @Override
     public List<String> generateImages(List<String> outfitsRawText) {
 
-        List<String> cleanedOutfits = extractClothingItems(outfitsRawText);
+//        List<String> cleanedOutfits = extractClothingItems(outfitsRawText);
+        List<String> cleanedOutfits = outfitsRawText;
         List<String> images = new ArrayList<>();
 
         for (String outfit : cleanedOutfits) {
@@ -45,8 +46,8 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
 
             String prompt =
                     "Generate a highly realistic full-body 4K street photo of "
-                            + genderPrompt + " wearing the following outfit: "
-                            + outfit + ". "
+                            + genderPrompt + " wearing the following outfit prompt: "
+                            + outfit + ". Be sure to only use clothing items mentioned in the prompt."
                             + "Style the photo as urban Toronto street photography, natural lighting, high detail, neutral ethnicity.";
 
             String base64 = callGemini(prompt);
@@ -80,16 +81,7 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
                         .replace("•", "")
                         .trim();
                 results.add(clothingLine);
-                continue;
             }
-            String[] lines = block.split("\n");
-            String fallback = lines[0].trim();
-
-            if (fallback.length() < 5) {
-                fallback = "T-shirt, jeans, hoodie, sneakers";
-            }
-
-            results.add(fallback);
         }
 
         return results;
@@ -114,6 +106,8 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
                     .build();
 
             Response response = client.newCall(request).execute();
+
+            System.out.println("Gemini API Response Code: " + response.code());
 
             if (!response.isSuccessful() || response.body() == null) {
                 System.err.println("Gemini API Error: " + response.code());

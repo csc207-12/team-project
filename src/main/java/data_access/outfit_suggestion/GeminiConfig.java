@@ -1,6 +1,5 @@
 package data_access.outfit_suggestion;
 
 public class GeminiConfig {
-//    public static final String API_KEY = "AIzaSyA_ysxuSUgdQ8YlduUNUoAWNqyObz9ZmZ4";
-    public static final String API_KEY = "AIzaSyBh7RjyZ9EoozPzXNOe-dGjUws1FMYjj3g";
+    public static final String API_KEY = System.getenv("GEMINI_API_KEY");
 }

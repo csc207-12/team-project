@@ -21,7 +21,7 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
     private final List<String> outfits;
 
     private final JPanel imageGrid = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-    private final JButton generateButton = new JButton("Generate Outfit Images");
+//    private final JButton generateButton = new JButton("Generate Outfit Images");
 
     private final JLabel statusLabel = new JLabel(" ");
 
@@ -37,10 +37,10 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
 
         setTitle("Outfit Image Gallery");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
+//        setLayout(new BorderLayout(10, 10));
 
-        generateButton.addActionListener(e -> requestImages());
-        add(generateButton, BorderLayout.NORTH);
+//        generateButton.addActionListener(e -> requestImages());
+//        add(generateButton, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(imageGrid);
         add(scrollPane, BorderLayout.CENTER);
@@ -51,13 +51,15 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
         statusPanel.add(statusLabel, BorderLayout.WEST);
         add(statusPanel, BorderLayout.SOUTH);
 
-        setSize(1000, 700);
+        setSize(420, 500);
         setLocationRelativeTo(null);
+
+        requestImages();
     }
 
     private void requestImages() {
-        generateButton.setEnabled(false);
-        generateButton.setText("Loading...");
+//        generateButton.setEnabled(false);
+//        generateButton.setText("Loading...");
 
         statusLabel.setText("Generating images...");
         statusLabel.revalidate();
@@ -65,6 +67,7 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
 
         imageGrid.revalidate();
         imageGrid.repaint();
+
 
         new SwingWorker<Void, Void>() {
             @Override
@@ -78,8 +81,8 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
     @Override
     public void onImageGenerationSuccess(List<String> base64Images) {
         SwingUtilities.invokeLater(() -> {
-            generateButton.setEnabled(true);
-            generateButton.setText("Generate Outfit Images");
+//            generateButton.setEnabled(true);
+//            generateButton.setText("Generate Outfit Images");
             statusLabel.setText("Images loaded successfully!");
 
             imageGrid.removeAll();
@@ -145,8 +148,8 @@ public class OutfitImageGalleryPanel extends JFrame implements OutfitImageGenera
     @Override
     public void onImageGenerationFailure(String errorMessage) {
         SwingUtilities.invokeLater(() -> {
-            generateButton.setEnabled(true);
-            generateButton.setText("Generate Outfit Images");
+//            generateButton.setEnabled(true);
+//            generateButton.setText("Generate Outfit Images");
             statusLabel.setText("Failed to load images.");
             JOptionPane.showMessageDialog(this, errorMessage,
                     "Image Error", JOptionPane.ERROR_MESSAGE);

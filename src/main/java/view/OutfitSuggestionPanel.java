@@ -10,7 +10,7 @@ import data_access.outfit_suggestion.OutfitSuggestionDataAccessObject;
 import javax.swing.*;
 import java.awt.*;
 
-public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionView {
+public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionView {
 
     private final OutfitSuggestionController controller;
     private final User currentUser;
@@ -29,8 +29,6 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         );
         this.controller = new OutfitSuggestionController(interactor);
 
-        setTitle("Get Outfit Suggestions for " + currentUser.getName()); // personalized title
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // create main panel
@@ -52,13 +50,16 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
 
         // button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton getSuggestionsButton = new JButton("Get Outfit Suggestions");
-        getSuggestionsButton.setFont(new Font("Arial", Font.BOLD, 14));
-        getSuggestionsButton.addActionListener(e -> onGetSuggestions(getSuggestionsButton));
+        JButton getMoreSuggestions = new JButton("Get More Suggestions");
+        getMoreSuggestions.setFont(new Font("Arial", Font.BOLD, 14));
+        getMoreSuggestions.addActionListener(e -> {
+            MultipleOutfitSuggestionPanel multiplePanel = new MultipleOutfitSuggestionPanel();
+            multiplePanel.setVisible(true);
+        });
         JButton generateImagesButton = new JButton("Generate Outfit Images");
         generateImagesButton.setFont(new Font("Arial", Font.BOLD, 14));
         generateImagesButton.addActionListener(e -> openImageGallery());
-        buttonPanel.add(getSuggestionsButton);
+        buttonPanel.add(getMoreSuggestions);
         buttonPanel.add(generateImagesButton);
         add(buttonPanel, BorderLayout.NORTH);
 
@@ -78,12 +79,11 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         statusPanel.add(statusLabel, BorderLayout.WEST);
         add(statusPanel, BorderLayout.SOUTH);
 
-        pack();
-        setLocationRelativeTo(null);
+        // Automatically load outfit suggestions when panel is created
+        loadOutfitSuggestions();
     }
 
-    private void onGetSuggestions(JButton button) {
-        button.setEnabled(false);
+    private void loadOutfitSuggestions() {
         statusLabel.setText("Loading...");
 
         new SwingWorker<Void, Void>() {
@@ -95,7 +95,7 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
 
             @Override
             protected void done() {
-                button.setEnabled(true);
+                // Task completed
             }
         }.execute();
     }
@@ -104,17 +104,21 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
     private java.util.List<String> parseOutfits(String suggestions) {
         java.util.List<String> results = new java.util.ArrayList<>();
 
-        String[] blocks = suggestions.split("\\*\\*Outfit [0-9]+:\\*\\*");
+        // Split suggestions between outfits and why
+         String[] blocks = suggestions.split("(?=Outfit:)");
+         for (String block : blocks) {
+             if (block.contains("Why:")) {
+                 String outfit = block.substring(0, block.indexOf("Why:")).trim();
+                 results.add(outfit);
+             }
+         }
 
-        for (int i = 1; i < blocks.length; i++) {
-            String b = blocks[i].trim();
+        for (String block : blocks) {
+            String trimmed = block.trim();
 
-            if (i < blocks.length - 1) {
-                b = b.split("\\*\\*Outfit")[0].trim();
-            }
-
-            if (!b.isBlank()) {
-                results.add("Outfit " + i + "\n" + b);
+            // Skip empty blocks and the weather header
+            if (!trimmed.isBlank() && trimmed.startsWith("Outfit")) {
+                results.add(trimmed);
             }
         }
 
