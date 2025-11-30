@@ -24,4 +24,23 @@ public class DailyForecastOutputData {
         this.success = success;
         this.message = message;
     }
+    public String getCityName() {
+        return city;
+    }
+
+    public List<SlotDTO> getSlots() {
+        return slots;
+    }
+
+    public String getAdvice() {
+        return adviceText;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getStatusMessage() {
+        return message;
+    }
 }

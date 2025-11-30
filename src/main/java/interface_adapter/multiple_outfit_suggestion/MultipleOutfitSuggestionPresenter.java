@@ -2,7 +2,6 @@ package interface_adapter.multiple_outfit_suggestion;
 
 import use_case.multiple_outfit_suggestion.MultipleOutfitSuggestionOutputBoundary;
 import use_case.multiple_outfit_suggestion.MultipleOutfitSuggestionOutputData;
-import java.util.List;
 
 /**
  * Presenter for Multiple Outfit Suggestion Use Case.

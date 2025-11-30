@@ -28,4 +28,31 @@ public class SlotDTO {
         this.windSpeed = windSpeed;
         this.feelsLike = feelsLike;
     }
+    public String getLabel() {
+        return label;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getIconCode() {
+        return iconCode;
+    }
+
+    public Double getPrecipProbability() {
+        return precipProbability;
+    }
+
+    public Double getWindSpeed() {
+        return windSpeed;
+    }
+
+    public Double getFeelsLike() {
+        return feelsLike;
+    }
 }
