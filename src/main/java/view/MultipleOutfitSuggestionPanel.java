@@ -69,9 +69,6 @@ public class MultipleOutfitSuggestionPanel extends JFrame implements MultipleOut
         // Button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         getSuggestionsButton.setFont(new Font("Arial", Font.BOLD, 14));
-        getSuggestionsButton.setBackground(new Color(70, 130, 180));
-        getSuggestionsButton.setForeground(Color.WHITE);
-        getSuggestionsButton.setFocusPainted(false);
         getSuggestionsButton.addActionListener(e -> onGetSuggestions());
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         buttonPanel.add(getSuggestionsButton);
