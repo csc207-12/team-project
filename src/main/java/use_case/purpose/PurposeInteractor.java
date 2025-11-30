@@ -21,7 +21,7 @@ public class PurposeInteractor implements PurposeInputBoundary {
 
         try {
             String suggestions = dataAccess.generateAccessorySuggestions(purpose.trim());
-            if (suggestions == null) {
+            if (suggestions == null || suggestions.trim().isEmpty()) {
                 presenter.presentFailure("Failed to generate accessory suggestions. Please try again.");
             } else {
                 PurposeOutputData outputData = new PurposeOutputData(suggestions);
