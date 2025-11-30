@@ -39,10 +39,6 @@ public class MultipleOutfitSuggestionInteractor implements MultipleOutfitSuggest
     @Override
     public void execute(MultipleOutfitSuggestionInputData inputData) {
         try {
-            // Step 1: Use the already-logged-in user (no database query needed!)
-            // The user object is passed in the constructor with all their preferences already loaded
-
-            // Step 2: Get today's weather forecast for the location
             DailyForecast forecast = weatherAndAIAccess.getWeatherForecast(inputData.getLocation());
 
             if (forecast == null || forecast.getSlots().isEmpty()) {
@@ -50,8 +46,6 @@ public class MultipleOutfitSuggestionInteractor implements MultipleOutfitSuggest
                 return;
             }
 
-            // Step 3: Generate multiple outfit suggestions using the LLM
-            // This combines user preferences (style, gender, etc.) with weather data
             List<String> outfitSuggestions = weatherAndAIAccess.generateMultipleOutfitSuggestions(
                     currentUser,
                     forecast,
@@ -63,11 +57,9 @@ public class MultipleOutfitSuggestionInteractor implements MultipleOutfitSuggest
                 return;
             }
 
-            // Step 4: Get temperature info for display (from first slot)
             ForecastSlot firstSlot = forecast.getSlots().get(0);
             double currentTemp = firstSlot.getTemperature();
 
-            // Step 5: Create the output data with the suggestions
             MultipleOutfitSuggestionOutputData outputData = new MultipleOutfitSuggestionOutputData(
                     outfitSuggestions,
                     currentUser.getName(),
@@ -75,7 +67,6 @@ public class MultipleOutfitSuggestionInteractor implements MultipleOutfitSuggest
                     forecast.getCity()
             );
 
-            // Step 6: Send the results to the presenter
             presenter.prepareSuccessView(outputData);
 
         } catch (Exception e) {

@@ -39,7 +39,6 @@ class DailyForecastTest {
         assertEquals("Toronto", forecast.getCity());
         assertEquals(today, forecast.getDate());
         assertEquals(slots, forecast.getSlots());
-        // 可选：确保没有额外复制（看你们是否在意）
         assertSame(slots, forecast.getSlots());
     }
 }
