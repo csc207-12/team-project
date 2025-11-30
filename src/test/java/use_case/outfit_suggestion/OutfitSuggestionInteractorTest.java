@@ -1,15 +1,16 @@
-package outfit_suggestion;
+package use_case.outfit_suggestion;
 
 import entity.DailyForecast;
 import entity.ForecastSlot;
 import entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import use_case.outfit_suggestion.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +28,13 @@ class OutfitSuggestionInteractorTest {
     @BeforeEach
     void setUp() {
         // Create a test user with preferences
-        List<String> styles = Arrays.asList("casual", "sporty");
-        testUser = new User("testUser", "password123", "female", styles);
+        testUser = new User("testUser", "password123", "Toronto", "female");
+
+        // Add style preferences using a Map
+        Map<String, Boolean> stylePrefs = new HashMap<>();
+        stylePrefs.put("casual", true);
+        stylePrefs.put("sporty", true);
+        testUser.setStyle(stylePrefs);
 
         // Create mock dependencies
         presenter = new TestOutfitSuggestionPresenter();
@@ -229,7 +235,7 @@ class OutfitSuggestionInteractorTest {
                 "The current user should be passed to data access");
     }
 
-    //  Mock Classes
+    // ==================== Mock/Test Classes ====================
 
     /**
      * Test implementation of the presenter.
@@ -297,29 +303,37 @@ class OutfitSuggestionInteractorTest {
             }
 
             if (shouldReturnEmptyForecast) {
-                return new DailyForecast(location, new ArrayList<>());
+                return new DailyForecast(location, LocalDate.now(), new ArrayList<>());
             }
 
-            // Create a mock forecast with weather data
+            // Create mock forecast with weather data
             List<ForecastSlot> slots = new ArrayList<>();
+
+            // ForecastSlot constructor: (label, temperature, description, iconCode, precipProbability, windSpeed, feelsLike)
             ForecastSlot slot1 = new ForecastSlot(
-                    "2024-11-24 12:00",
-                    customTemperature,
-                    "Clear",
-                    10.0,
-                    5
+                    "Morning",            // label
+                    customTemperature,    // temperature
+                    "Clear",              // description
+                    "01d",                // iconCode
+                    0.1,                  // precipProbability
+                    10.0,                 // windSpeed
+                    customTemperature - 2.0  // feelsLike
             );
+
             ForecastSlot slot2 = new ForecastSlot(
-                    "2024-11-24 15:00",
+                    "Afternoon",
                     customTemperature + 2,
                     "Partly Cloudy",
+                    "02d",
+                    0.2,
                     12.0,
-                    4
+                    customTemperature
             );
+
             slots.add(slot1);
             slots.add(slot2);
 
-            return new DailyForecast(location, slots);
+            return new DailyForecast(location, LocalDate.now(), slots);
         }
 
         @Override
