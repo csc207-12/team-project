@@ -17,12 +17,13 @@ import java.util.List;
 /**
  * WeatherApp: main window composed of top controls + forecast grid + advice panel.
  */
-public class WeatherApp extends JPanel {
+public class WeatherPanel extends JPanel {
 
     private final JTextField cityField = new JTextField(16);
     private final JButton searchBtn = new JButton("Search Weather");
     private final JButton locationBtn = new JButton("Use My Location");
     private final JButton purposeBtn = new JButton("Purpose");
+    private final JButton logoutBtn = new JButton("Logout");
     private final JLabel statusLabel = new JLabel(" ");
 
     private final ForecastPanel forecastPanel = new ForecastPanel();
@@ -31,7 +32,9 @@ public class WeatherApp extends JPanel {
     private final DailyForecastController controller;
     private final WeatherViewModel viewModel;
 
-    public WeatherApp(User currentUser) {
+    private Runnable onLogoutCallback;
+
+    public WeatherPanel(User currentUser) {
 
 //        super("Weather");
 
@@ -61,11 +64,12 @@ public class WeatherApp extends JPanel {
     private void initUI(User currentUser) {
         // Top controls
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        top.add(new JLabel("City:"));
+        top.add(new JLabel("City:" + currentUser.getLocation().trim() ));
         //top.add(cityField);
-        top.add(searchBtn);
-        top.add(locationBtn);
+//        top.add(searchBtn);
+//        top.add(locationBtn);
         top.add(purposeBtn);
+        top.add(logoutBtn);
 
         // Center: left forecast grid + right advice
         JPanel center = new JPanel(new BorderLayout());
@@ -84,18 +88,27 @@ public class WeatherApp extends JPanel {
         add(bottom, BorderLayout.SOUTH);
 
         // Actions
-        searchBtn.addActionListener(e -> runInBackground(() -> {
-//            controller.searchByCity(cityField.getText());
-            controller.searchByCity(currentUser.getLocation().trim());
-        }));
+//        searchBtn.addActionListener(e -> runInBackground(() -> {
+////            controller.searchByCity(cityField.getText());
+//            controller.searchByCity(currentUser.getLocation().trim());
+//        }));
 
-        locationBtn.addActionListener(e -> runInBackground(() -> {
-            controller.useMyLocation();
-        }));
+        runInBackground(() -> controller.searchByCity(currentUser.getLocation().trim()));
+//
+//        locationBtn.addActionListener(e -> runInBackground(() -> {
+//            controller.useMyLocation();
+//        }));
+
 
         purposeBtn.addActionListener(e -> {
             PurposePanel purposePanel = new PurposePanel();
             purposePanel.setVisible(true);
+        });
+
+        logoutBtn.addActionListener(e -> {
+            if (onLogoutCallback != null) {
+                onLogoutCallback.run();
+            }
         });
     }
 
@@ -145,5 +158,9 @@ public class WeatherApp extends JPanel {
         searchBtn.setEnabled(enabled);
         locationBtn.setEnabled(enabled);
         cityField.setEnabled(enabled);
+    }
+
+    public void setOnLogout(Runnable callback) {
+        this.onLogoutCallback = callback;
     }
 }

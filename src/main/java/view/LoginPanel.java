@@ -69,6 +69,10 @@ public class LoginPanel extends JFrame implements PropertyChangeListener {
         this.onLoginSuccessCallback = callback;
     }
 
+    public void clearFields() {
+        usernameField.setText("");
+        passwordField.setText("");
+    }
 
     public void onLogin() {
         String username = usernameField.getText();

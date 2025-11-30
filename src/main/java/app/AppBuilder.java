@@ -4,7 +4,7 @@ import data_access.user_storage.UserSession;
 import entity.User;
 import view.LoginPanel;
 import view.OutfitSuggestionPanel;
-import view.WeatherApp;
+import view.WeatherPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,8 +31,8 @@ public class AppBuilder {
                 JFrame mainAppFrame = buildMainApplicationFrame(currentUser);
                 mainAppFrame.setVisible(true);
 
-                // Close the login window
-                loginView.dispose();
+                // Hide the login window instead of disposing
+                loginView.setVisible(false);
             });
         }
         return this;
@@ -45,7 +45,7 @@ public class AppBuilder {
 
     // Build the main application frame with WeatherApp and OutfitSuggestionPanel
     private JFrame buildMainApplicationFrame(User currentUser) {
-        JFrame frame = new JFrame("Weather & Outfit Application");
+        JFrame frame = new JFrame("WeatherWear");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -54,11 +54,25 @@ public class AppBuilder {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
 
         // Create the weather and outfit views
-        WeatherApp weatherApp = new WeatherApp(currentUser);
+        WeatherPanel weatherPanel = new WeatherPanel(currentUser);
         OutfitSuggestionPanel outfitSuggestionPanel = new OutfitSuggestionPanel(currentUser);
 
+        // Set up logout callback
+        weatherPanel.setOnLogout(() -> {
+            // Clear user session
+            UserSession.getInstance().clearSession();
+
+            // Close main app frame
+            frame.dispose();
+
+            // Clear login fields and reopen login panel
+            loginView.clearFields();
+            loginView.setVisible(true);
+            loginView.setLocationRelativeTo(null);
+        });
+
         // Add views to main panel
-        mainPanel.add(weatherApp);
+        mainPanel.add(weatherPanel);
         mainPanel.add(Box.createHorizontalStrut(20)); // space between panels
         mainPanel.add(outfitSuggestionPanel);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
