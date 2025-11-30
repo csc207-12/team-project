@@ -5,7 +5,7 @@ import interface_adapter.style.StylePresenter;
 import interface_adapter.style.StyleState;
 import interface_adapter.style.StyleViewModel;
 import use_case.style.StyleInteractor;
-import use_case.UserRepository;
+import use_case.weather.UserRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -135,8 +135,16 @@ public class StylePanel extends JFrame implements PropertyChangeListener {
             if (state.isSuccess()) {
                     JOptionPane.showMessageDialog(this, state.getMessage(), "Success", JOptionPane.INFORMATION_MESSAGE);
                     dispose(); // Close the style frame
-                    LoginPanel loginPanel = new LoginPanel();
-                    loginPanel.setVisible(true);
+
+                    // Use original LoginPanel from AppBuilder
+                    LoginPanel loginPanel = app.AppBuilder.getLoginView();
+                    if (loginPanel != null) {
+                        loginPanel.setVisible(true);
+                    } else {
+                        // Fallback
+                        loginPanel = new LoginPanel();
+                        loginPanel.setVisible(true);
+                    }
             } else if (state.getMessage() != null && !state.getMessage().isEmpty()) {
                     JOptionPane.showMessageDialog(this, state.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

@@ -10,20 +10,16 @@ import data_access.outfit_suggestion.OutfitSuggestionDataAccessObject;
 import javax.swing.*;
 import java.awt.*;
 
-// panel for getting personalized outfit suggestions
-public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionView {
+public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionView {
 
     private final OutfitSuggestionController controller;
     private final User currentUser;
 
-    private final JTextField locationField = new JTextField(20);
-    private final JButton getSuggestionsButton = new JButton("Get Outfit Suggestions");
     private final JTextArea suggestionsArea = new JTextArea(15, 40);
     private final JLabel statusLabel = new JLabel(" ");
 
     public OutfitSuggestionPanel(User currentUser) {
         this.currentUser = currentUser;
-        // set up clean architecture components
         OutfitSuggestionPresenter presenter = new OutfitSuggestionPresenter(this);
         OutfitSuggestionDataAccessObject dataAccess = new OutfitSuggestionDataAccessObject();
         OutfitSuggestionInteractor interactor = new OutfitSuggestionInteractor(
@@ -33,8 +29,6 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
         );
         this.controller = new OutfitSuggestionController(interactor);
 
-        setTitle("Get Outfit Suggestions for " + currentUser.getName()); // personalized title
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // create main panel
@@ -51,99 +45,106 @@ public class OutfitSuggestionPanel extends JFrame implements OutfitSuggestionVie
 
         // input field (just location cuz user is already logged in)
 
-        mainPanel.add(createFieldPanel("Location:", locationField));
-        mainPanel.add(Box.createVerticalStrut(15));
+//        mainPanel.add(createFieldPanel("Location:", locationField));
+//        mainPanel.add(Box.createVerticalStrut(15));
 
         // button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        getSuggestionsButton.setFont(new Font("Arial", Font.BOLD, 14));
-        getSuggestionsButton.addActionListener(e -> onGetSuggestions());
-        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        buttonPanel.add(getSuggestionsButton);
-        mainPanel.add(buttonPanel);
-        mainPanel.add(Box.createVerticalStrut(15));
-
-        // suggestions display area
-        JLabel suggestionsLabel = new JLabel("Outfit Suggestions:");
-        suggestionsLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        suggestionsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        mainPanel.add(suggestionsLabel);
-        mainPanel.add(Box.createVerticalStrut(5));
+        JButton getMoreSuggestions = new JButton("Get More Suggestions");
+        getMoreSuggestions.setFont(new Font("Arial", Font.BOLD, 14));
+        getMoreSuggestions.addActionListener(e -> {
+            MultipleOutfitSuggestionPanel multiplePanel = new MultipleOutfitSuggestionPanel();
+            multiplePanel.setVisible(true);
+        });
+        JButton generateImagesButton = new JButton("Generate Outfit Images");
+        generateImagesButton.setFont(new Font("Arial", Font.BOLD, 14));
+        generateImagesButton.addActionListener(e -> openImageGallery());
+        buttonPanel.add(getMoreSuggestions);
+        buttonPanel.add(generateImagesButton);
+        add(buttonPanel, BorderLayout.NORTH);
 
         suggestionsArea.setEditable(false);
+        suggestionsArea.setFont(new Font("Arial", Font.PLAIN, 13));
         suggestionsArea.setLineWrap(true);
         suggestionsArea.setWrapStyleWord(true);
-        suggestionsArea.setFont(new Font("Arial", Font.PLAIN, 13));
         JScrollPane scrollPane = new JScrollPane(suggestionsArea);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(350, 450));
 
         add(mainPanel, BorderLayout.CENTER);
 
         // status bar at bottom
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        statusLabel.setFont(new Font("Arial", Font.ITALIC, 12));
-        bottomPanel.add(statusLabel, BorderLayout.WEST);
-        add(bottomPanel, BorderLayout.SOUTH);
+        JPanel statusPanel = new JPanel(new BorderLayout());
+        statusPanel.add(statusLabel, BorderLayout.WEST);
+        add(statusPanel, BorderLayout.SOUTH);
 
-        pack();
-        setLocationRelativeTo(null);
+        // Automatically load outfit suggestions when panel is created
+        loadOutfitSuggestions();
     }
 
-    private JPanel createFieldPanel(String labelText, JComponent field) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel label = new JLabel(labelText);
-        label.setPreferredSize(new Dimension(80, 25));
-        panel.add(label);
-        panel.add(field);
-        return panel;
-    }
+    private void loadOutfitSuggestions() {
+        statusLabel.setText("Loading...");
 
-    private void onGetSuggestions() {
-        String location = locationField.getText().trim();
-
-        if ( location.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Please enter a location",
-                    "Missing Information",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // disable button while loading
-        getSuggestionsButton.setEnabled(false);
-        statusLabel.setText("Loading suggestions for " + currentUser.getName() + " ... ");
-        suggestionsArea.setText("");
-
-        // run in background thread
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                controller.execute(currentUser.getName(), location);
+                controller.execute(currentUser.getName(), currentUser.getLocation());
                 return null;
             }
 
             @Override
             protected void done() {
-                // re-enable button
-                getSuggestionsButton.setEnabled(true);
+                // Task completed
             }
         }.execute();
     }
 
-    @Override
-    public void onOutfitSuggestionSuccess(String suggestions, String username,
-                                          double temperature, String city) {
-        SwingUtilities.invokeLater(() -> {
-            // display the suggestions
-            StringBuilder display = new StringBuilder();
-            display.append("Weather in ").append(city).append(": ")
-                    .append(String.format("%.1f", temperature)).append("°C\n\n");
-            display.append(suggestions);
 
-            suggestionsArea.setText(display.toString());
+    private java.util.List<String> parseOutfits(String suggestions) {
+        java.util.List<String> results = new java.util.ArrayList<>();
+
+        // Split suggestions between outfits and why
+         String[] blocks = suggestions.split("(?=Outfit:)");
+         for (String block : blocks) {
+             if (block.contains("Why:")) {
+                 String outfit = block.substring(0, block.indexOf("Why:")).trim();
+                 results.add(outfit);
+             }
+         }
+
+        for (String block : blocks) {
+            String trimmed = block.trim();
+
+            // Skip empty blocks and the weather header
+            if (!trimmed.isBlank() && trimmed.startsWith("Outfit")) {
+                results.add(trimmed);
+            }
+        }
+
+        return results;
+    }
+
+    private void openImageGallery() {
+        java.util.List<String> outfitBlocks = parseOutfits(suggestionsArea.getText());
+
+        view.OutfitImageGalleryPanel gallery =
+                new view.OutfitImageGalleryPanel(currentUser, outfitBlocks);
+
+        gallery.setVisible(true);
+    }
+
+    @Override
+    public void onOutfitSuggestionSuccess(
+            String suggestions, String username, double temperature, String city) {
+
+        SwingUtilities.invokeLater(() -> {
+            StringBuilder formatted = new StringBuilder();
+            formatted.append("Weather in ").append(city).append(": ")
+                    .append(String.format("%.1f", temperature)).append("°C\n\n");
+
+            formatted.append(suggestions);
+            suggestionsArea.setText(formatted.toString());
             suggestionsArea.setCaretPosition(0);
             statusLabel.setText("Suggestions loaded successfully!");
         });

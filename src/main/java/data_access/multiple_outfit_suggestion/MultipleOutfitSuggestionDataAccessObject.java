@@ -1,10 +1,11 @@
-package data_access.outfit_suggestion;
+package data_access.multiple_outfit_suggestion;
 
 import data_access.weather.WeatherAPIConfig;
+import data_access.outfit_suggestion.GeminiConfig;
 import entity.User;
 import entity.DailyForecast;
 import entity.ForecastSlot;
-import use_case.outfit_suggestion.OutfitSuggestionDataAccessInterface;
+import use_case.multiple_outfit_suggestion.MultipleOutfitSuggestionDataAccessInterface;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,25 +15,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// handles calling the weather api and gemini ai for outfit suggestions
-public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAccessInterface {
+/**
+ * Data Access Object for Multiple Outfit Suggestion Use Case.
+ * Handles calling the Weather API and Gemini AI for generating multiple outfit suggestions.
+ */
+public class MultipleOutfitSuggestionDataAccessObject implements MultipleOutfitSuggestionDataAccessInterface {
 
     private final OkHttpClient client;
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
-    // api urls
+    // API URLs
     private static final String WEATHER_API_BASE = "https://api.openweathermap.org/data/2.5/forecast";
     private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent";
-//    private static final String GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-    public OutfitSuggestionDataAccessObject() {
+    public MultipleOutfitSuggestionDataAccessObject() {
         this.client = new OkHttpClient();
     }
 
     @Override
     public DailyForecast getWeatherForecast(String location) {
         try {
-            // build url with location and api key
+            // Build URL with location and API key
             String url = WEATHER_API_BASE +
                     "?q=" + location +
                     "&appid=" + WeatherAPIConfig.API_KEY +
@@ -67,15 +70,15 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
     }
 
     @Override
-    public List<String> generateOutfitSuggestions(User user, DailyForecast forecast) {
+    public List<String> generateMultipleOutfitSuggestions(User user, DailyForecast forecast, int numberOfSuggestions) {
         try {
-            // create the prompt for ai
-            String prompt = buildPrompt(user, forecast);
+            // Create the prompt for AI with variable number of suggestions
+            String prompt = buildPrompt(user, forecast, numberOfSuggestions);
 
-            // make it into json
+            // Convert to JSON
             String jsonBody = buildGeminiRequest(prompt);
 
-            // call gemini api
+            // Call Gemini API
             String url = GEMINI_API_BASE + "?key=" + GeminiConfig.API_KEY;
 
             RequestBody body = RequestBody.create(jsonBody, JSON_MEDIA_TYPE);
@@ -110,7 +113,9 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
         }
     }
 
-    // turn weather json into our DailyForecast object
+    /**
+     * Parse weather JSON response into DailyForecast object.
+     */
     private DailyForecast parseWeatherResponse(String responseBody, String city) {
         try {
             JSONObject json = new JSONObject(responseBody);
@@ -118,28 +123,28 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
 
             List<ForecastSlot> slots = new ArrayList<>();
 
-            // grab first 4 time slots (next 12 hours)
+            // Get first 4 time slots (next 12 hours)
             for (int i = 0; i < Math.min(4, list.length()); i++) {
                 JSONObject item = list.getJSONObject(i);
 
-                // get temperature stuff
+                // Get temperature data
                 JSONObject main = item.getJSONObject("main");
                 double temp = main.getDouble("temp");
                 double feelsLike = main.optDouble("feels_like", temp);
 
-                // get weather description
+                // Get weather description
                 JSONArray weather = item.getJSONArray("weather");
                 String description = weather.getJSONObject(0).getString("description");
                 String iconCode = weather.getJSONObject(0).getString("icon");
 
-                // get wind
+                // Get wind
                 JSONObject wind = item.optJSONObject("wind");
                 double windSpeed = wind != null ? wind.optDouble("speed", 0.0) : 0.0;
 
-                // chance of rain
+                // Chance of rain
                 double precipProb = item.optDouble("pop", 0.0);
 
-                // label it like "now" or "in 3 hours"
+                // Label it like "now" or "in 3 hours"
                 String timeLabel = getTimeLabel(i);
 
                 ForecastSlot slot = new ForecastSlot(
@@ -164,18 +169,22 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
         }
     }
 
-    // build the prompt we'll send to gemini
-    private String buildPrompt(User user, DailyForecast forecast) {
+    /**
+     * Build the prompt to send to Gemini AI for multiple outfit suggestions.
+     */
+    private String buildPrompt(User user, DailyForecast forecast, int numberOfSuggestions) {
         StringBuilder prompt = new StringBuilder();
 
-        prompt.append("You are a personal fashion stylist. Generate 1 outfit suggestion based on:\n\n");
+        prompt.append("You are a personal fashion stylist. Generate ")
+              .append(numberOfSuggestions)
+              .append(" DIFFERENT outfit suggestions based on:\n\n");
 
-        // user info
+        // User info
         prompt.append("User Profile:\n");
         prompt.append("- Gender: ").append(user.getGender()).append("\n");
         prompt.append("- Location: ").append(user.getLocation()).append("\n");
 
-        // what clothes they like
+        // Clothing preferences
         prompt.append("\nClothing Preferences (items they own/like):\n");
         Map<String, Boolean> style = user.getStyle();
         if (style != null && !style.isEmpty()) {
@@ -186,7 +195,7 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
             }
         }
 
-        // current weather
+        // Current weather
         prompt.append("\nWeather Conditions in ").append(forecast.getCity()).append(":\n");
         if (!forecast.getSlots().isEmpty()) {
             ForecastSlot firstSlot = forecast.getSlots().get(0);
@@ -195,27 +204,28 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
             prompt.append("- Conditions: ").append(firstSlot.getDescription()).append("\n");
             prompt.append("- Wind: ").append(String.format("%.1f", firstSlot.getWindSpeed())).append(" m/s\n");
             if (firstSlot.getPrecipProbability() != null && firstSlot.getPrecipProbability() > 0) {
-                prompt.append("- Precipitation chance: ").append(String.format("%.0f", firstSlot.getPrecipProbability() * 100)).append("%\n");
+                prompt.append("- Precipitation chance: ")
+                      .append(String.format("%.0f", firstSlot.getPrecipProbability() * 100))
+                      .append("%\n");
             }
         }
 
-        // tell ai what to do
-        prompt.append("\nProvide 1 outfit suggestion. For the outfit:\n");
+        // Instructions for AI
+        prompt.append("\nProvide ").append(numberOfSuggestions)
+              .append(" DIFFERENT outfit suggestions. Each outfit should be DISTINCT and offer variety ");
+        prompt.append("in style, formality, or occasion. For each outfit:\n");
         prompt.append("1. List specific clothing items from their preferences\n");
         prompt.append("2. Explain why it's suitable for the weather\n");
-        prompt.append("3. Keep it practical and comfortable\n\n");
+        prompt.append("3. Keep it practical and comfortable\n");
+        prompt.append("4. Make sure each suggestion is notably different from the others\n\n");
         prompt.append("Format each outfit as:\nOutfit [number]: [clothing items]\nWhy: [brief explanation]\n");
-        prompt.append("Print each clothing item on a new line in the format '- [clothing item]'\n");
-        prompt.append("Factor in colour and what combinations of clothing + colour go well together. If nessecary " +
-                "mention what colour the clothing piece(s) should be for a better outfit.\n");
-        prompt.append("For example:\n");
-        prompt.append("Outfit:\n- Blue jeans\n- White t-shirt\n- Light jacket\nWhy: The light jacket is " +
-                "perfect for the mild temperature and potential wind.\n\n");
 
         return prompt.toString();
     }
 
-    // format prompt into gemini's expected json structure
+    /**
+     * Format prompt into Gemini's expected JSON structure.
+     */
     private String buildGeminiRequest(String prompt) {
         JSONObject request = new JSONObject();
 
@@ -235,7 +245,9 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
         return request.toString();
     }
 
-    // pull the outfit suggestions out of gemini's response
+    /**
+     * Parse outfit suggestions from Gemini's response.
+     */
     private List<String> parseGeminiResponse(String responseBody) {
         try {
             JSONObject json = new JSONObject(responseBody);
@@ -255,7 +267,7 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
 
             String text = parts.getJSONObject(0).getString("text");
 
-            // split into separate outfits
+            // Split into separate outfits
             List<String> suggestions = new ArrayList<>();
             String[] lines = text.split("\n\n");
 
@@ -281,7 +293,9 @@ public class OutfitSuggestionDataAccessObject implements OutfitSuggestionDataAcc
         }
     }
 
-    // give each time slot a label
+    /**
+     * Generate time labels for forecast slots.
+     */
     private String getTimeLabel(int slotIndex) {
         switch (slotIndex) {
             case 0: return "Now";

@@ -1,7 +1,14 @@
 package view;
 
-import interface_adapter.DailyForecastController;
-import interface_adapter.WeatherViewModel;
+import data_access.weather.ForecastAPIGatewayImpl;
+import data_access.weather.LocationServiceImpl;
+import entity.User;
+import interface_adapter.weather.DailyForecastController;
+import interface_adapter.weather.DailyForecastPresenter;
+import interface_adapter.weather.RuleBasedAdviceService;
+import interface_adapter.weather.WeatherViewModel;
+import use_case.weather.*;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +17,12 @@ import java.util.List;
 /**
  * WeatherApp: main window composed of top controls + forecast grid + advice panel.
  */
-public class WeatherApp extends JFrame {
+public class WeatherApp extends JPanel {
 
     private final JTextField cityField = new JTextField(16);
     private final JButton searchBtn = new JButton("Search Weather");
     private final JButton locationBtn = new JButton("Use My Location");
+    private final JButton purposeBtn = new JButton("Purpose");
     private final JLabel statusLabel = new JLabel(" ");
 
     private final ForecastPanel forecastPanel = new ForecastPanel();
@@ -23,33 +31,52 @@ public class WeatherApp extends JFrame {
     private final DailyForecastController controller;
     private final WeatherViewModel viewModel;
 
-    public WeatherApp(DailyForecastController controller, WeatherViewModel viewModel) {
-        super("Weather");
-        this.controller = controller;
-        this.viewModel = viewModel;
+    public WeatherApp(User currentUser) {
 
-        initUI();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
+//        super("Weather");
+
+        //ViewModel
+        viewModel = new WeatherViewModel();
+
+        // Presenter
+        DailyForecastPresenter presenter = new DailyForecastPresenter(viewModel);
+
+        // Gateways & services
+        ForecastAPIGateway forecastGateway = new ForecastAPIGatewayImpl();
+        LocationService locationService = new LocationServiceImpl();
+        AdviceService adviceService = new RuleBasedAdviceService();
+
+        // Interactor (use case)
+        DailyForecastInputBoundary interactor =
+                new DailyForecastInteractor(forecastGateway, locationService, adviceService, presenter);
+
+        // Controller
+        controller = new DailyForecastController(interactor, viewModel);
+
+
+
+        initUI(currentUser);
     }
 
-    private void initUI() {
+    private void initUI(User currentUser) {
         // Top controls
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
         top.add(new JLabel("City:"));
-        top.add(cityField);
+        //top.add(cityField);
         top.add(searchBtn);
         top.add(locationBtn);
+        top.add(purposeBtn);
 
         // Center: left forecast grid + right advice
         JPanel center = new JPanel(new BorderLayout());
+        center.setPreferredSize(new Dimension(800, 500)); // Set preferred size (width, height)
         center.add(forecastPanel, BorderLayout.CENTER);
-        center.add(advicePanel, BorderLayout.EAST);
+        //center.add(advicePanel, BorderLayout.EAST);
 
         // Bottom status
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.add(statusLabel, BorderLayout.WEST);
+
 
         setLayout(new BorderLayout(6, 6));
         add(top, BorderLayout.NORTH);
@@ -58,12 +85,18 @@ public class WeatherApp extends JFrame {
 
         // Actions
         searchBtn.addActionListener(e -> runInBackground(() -> {
-            controller.searchByCity(cityField.getText());
+//            controller.searchByCity(cityField.getText());
+            controller.searchByCity(currentUser.getLocation().trim());
         }));
 
         locationBtn.addActionListener(e -> runInBackground(() -> {
             controller.useMyLocation();
         }));
+
+        purposeBtn.addActionListener(e -> {
+            PurposePanel purposePanel = new PurposePanel();
+            purposePanel.setVisible(true);
+        });
     }
 
     /** Run controller call in background, then refresh UI from ViewModel on EDT. */
