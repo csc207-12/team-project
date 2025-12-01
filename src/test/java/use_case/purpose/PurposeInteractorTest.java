@@ -68,6 +68,21 @@ class PurposeInteractorTest {
                 "Error should indicate missing purpose");
     }
 
+    @Test
+    void testNullPurpose() {
+        // Arrange
+        PurposeInputData inputData = new PurposeInputData(null);
+
+        // Act
+        interactor.generateAccessories(inputData);
+
+        // Assert
+        assertTrue(presenter.wasFailureCalled(),
+                "Failure view should be called when purpose is null");
+        assertTrue(presenter.getErrorMessage().contains("Please enter"),
+                "Error message should indicate missing purpose");
+    }
+
     /**
      * Test when the data access returns null suggestions.
      */
