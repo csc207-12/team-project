@@ -16,10 +16,6 @@ public class OutfitSuggestionInputData {
         this.location = location;
     }
 
-    // username getter
-    public String getUsername() {
-        return username;
-    }
     // location getter
     public String getLocation() {
         return location;

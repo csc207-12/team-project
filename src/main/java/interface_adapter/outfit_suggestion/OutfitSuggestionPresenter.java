@@ -17,7 +17,6 @@ public class OutfitSuggestionPresenter implements OutfitSuggestionOutputBoundary
         // call the view with the results
         view.onOutfitSuggestionSuccess(
                 outputData.getOutfitSuggestions(),
-                outputData.getUsername(),
                 outputData.getTemperature(),
                 outputData.getCity()
         );

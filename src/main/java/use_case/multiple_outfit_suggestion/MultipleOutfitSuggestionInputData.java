@@ -22,10 +22,6 @@ public class MultipleOutfitSuggestionInputData {
         this.numberOfSuggestions = numberOfSuggestions;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public String getLocation() {
         return location;
     }

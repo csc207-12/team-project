@@ -27,12 +27,5 @@ public class InMemoryUserRepository implements UserRepository {
         return users.containsKey(username);
     }
 
-    /**
-     * Clear all users from the repository.
-     * Useful for resetting state between tests.
-     */
-    public void clear() {
-        users.clear();
-    }
 }
 

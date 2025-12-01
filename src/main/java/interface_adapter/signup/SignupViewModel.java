@@ -5,7 +5,7 @@ import interface_adapter.ViewModel;
 public class SignupViewModel extends ViewModel<SignupState> {
 
     public SignupViewModel() {
-        super("sign up");
+        super();
         setState(new SignupState());
     }
 }

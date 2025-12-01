@@ -27,7 +27,4 @@ public class AdvicePanel extends JPanel {
         textArea.setCaretPosition(0);
     }
 
-    public void clear() {
-        setAdviceText("");
-    }
 }

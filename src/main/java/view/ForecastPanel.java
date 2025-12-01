@@ -72,10 +72,6 @@ public class ForecastPanel extends JPanel {
         }
     }
 
-    public void clear() {
-        render(null);
-    }
-
 
     private void addHeader(String... cols) {
         GridBagConstraints gbc = base(0, 0);

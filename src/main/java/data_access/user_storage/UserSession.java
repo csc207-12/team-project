@@ -32,8 +32,5 @@ public class UserSession {
         this.currentUser = null;
     }
 
-    public boolean isLoggedIn() {
-        return currentUser != null;
-    }
 }
 

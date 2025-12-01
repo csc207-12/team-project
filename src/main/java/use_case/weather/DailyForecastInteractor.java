@@ -15,39 +15,46 @@ import java.util.List;
 
 /**
  * DailyForecastInteractor: orchestrates the "today's four-slot forecast" logic.
+ *
+ * Now it always uses the city name coming from DailyForecastInputData.
+ * There is no automatic "use my current location" logic anymore.
  */
 public class DailyForecastInteractor implements DailyForecastInputBoundary {
 
     private final ForecastAPIGateway forecastGateway;
-    private final LocationService locationService;
     private final AdviceService adviceService;
     private final DailyForecastOutputBoundary presenter;
 
     public DailyForecastInteractor(ForecastAPIGateway forecastGateway,
-                                   LocationService locationService,
                                    AdviceService adviceService,
                                    DailyForecastOutputBoundary presenter) {
         this.forecastGateway = forecastGateway;
-        this.locationService = locationService;
         this.adviceService = adviceService;
         this.presenter = presenter;
     }
 
     @Override
     public void getDailyForecast(DailyForecastInputData inputData) {
-        String resolvedCity = (inputData.cityName == null || inputData.cityName.trim().isEmpty())
-                ? null : inputData.cityName.trim();
+        // 1. Validate city name (we no longer auto-detect location)
+        String rawCity = inputData.cityName;
+        if (rawCity == null || rawCity.trim().isEmpty()) {
+            presenter.presentDailyForecast(new DailyForecastOutputData(
+                    "",
+                    new ArrayList<>(),
+                    "",
+                    false,
+                    "City name is required."
+            ));
+            return;
+        }
+
+        String resolvedCity = rawCity.trim();
 
         try {
-            //Resolve city (auto location if not provided)
-            if (resolvedCity == null) {
-                resolvedCity = locationService.getCurrentCity();
-            }
-
-            //Call gateway to get 5-day/3-hour forecast JSON
+            // 2. Call gateway to get 5-day/3-hour forecast JSON
             String json = forecastGateway.request3hForecastJson(resolvedCity);
 
-            //Parse JSON
+            // 3. Parse JSON
             JSONObject root = new JSONObject(json);
             JSONObject cityObj = root.getJSONObject("city");
             int tzShiftSec = cityObj.optInt("timezone", 0); // seconds from UTC
@@ -75,7 +82,7 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
                 long dt = item.getLong("dt"); // Unix time (seconds)
                 LocalDateTime local = Instant.ofEpochSecond(dt).atOffset(zoneOffset).toLocalDateTime();
                 if (local.toLocalDate().equals(targetDate)) {
-                    // Attach local datetime for later sorting/selection (store as string field)
+                    // Attach local datetime for later sorting/selection (store as extra fields)
                     item.put("_localHour", local.getHour());
                     item.put("_localDateTime", local.toString());
                     todays.add(item);
@@ -85,18 +92,20 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
             if (todays.isEmpty()) {
                 // No data for today — treat as error
                 presenter.presentDailyForecast(new DailyForecastOutputData(
-                        resolvedCity, new ArrayList<>(),
-                        "No forecast available for today.", false,
+                        resolvedCity,
+                        new ArrayList<>(),
+                        "No forecast available for today.",
+                        false,
                         "No forecast entries for today."
                 ));
                 return;
             }
 
-            //Pick 4 representative slots (closest to target hours)
-            ForecastSlot morning   = pickSlotForTargetHour(todays, zoneOffset, targetDate,  9, "Morning");
-            ForecastSlot afternoon = pickSlotForTargetHour(todays, zoneOffset, targetDate, 15, "Afternoon");
-            ForecastSlot evening   = pickSlotForTargetHour(todays, zoneOffset, targetDate, 19, "Evening");
-            ForecastSlot overnight = pickSlotForTargetHour(todays, zoneOffset, targetDate, 23, "Overnight");
+            // 4. Pick 4 representative slots (closest to target hours)
+            ForecastSlot morning   = pickSlotForTargetHour(todays,  9, "Morning");
+            ForecastSlot afternoon = pickSlotForTargetHour(todays, 15, "Afternoon");
+            ForecastSlot evening   = pickSlotForTargetHour(todays, 19, "Evening");
+            ForecastSlot overnight = pickSlotForTargetHour(todays, 23, "Overnight");
 
             List<ForecastSlot> slots = new ArrayList<>();
             if (morning != null)   slots.add(morning);
@@ -129,11 +138,11 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
         } catch (Exception e) {
             // Any network/parse error — report a friendly message
             presenter.presentDailyForecast(new DailyForecastOutputData(
-                    resolvedCity == null ? "" : resolvedCity,
+                    resolvedCity,
                     new ArrayList<>(),
-                    "Failed to fetch forecast. Please check your input or connection.",
+                    "",
                     false,
-                    e.getMessage()
+                    "Failed to fetch forecast. Please check your input or connection."
             ));
         }
     }
@@ -142,8 +151,6 @@ public class DailyForecastInteractor implements DailyForecastInputBoundary {
      * Pick the entry closest to the targetHour among today's entries, and build a ForecastSlot.
      */
     private ForecastSlot pickSlotForTargetHour(List<JSONObject> todays,
-                                               ZoneOffset zoneOffset,
-                                               LocalDate cityToday,
                                                int targetHour,
                                                String label) {
         // Filter today's entries (already filtered) and find the closest by absolute hour difference

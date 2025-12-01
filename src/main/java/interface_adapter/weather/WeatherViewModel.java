@@ -29,14 +29,9 @@ public class WeatherViewModel {
         }
     }
 
-    private String city = "";
     private List<SlotView> todaySlots = new ArrayList<>();
     private String adviceText = "";
     private String statusMessage = ""; // e.g., "OK" / error message
-    private boolean success = true;
-
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city != null ? city : ""; }
 
     public List<SlotView> getTodaySlots() { return todaySlots; }
     public void setTodaySlots(List<SlotView> todaySlots) {
@@ -53,6 +48,4 @@ public class WeatherViewModel {
         this.statusMessage = statusMessage != null ? statusMessage : "";
     }
 
-    public boolean isSuccess() { return success; }
-    public void setSuccess(boolean success) { this.success = success; }
 }

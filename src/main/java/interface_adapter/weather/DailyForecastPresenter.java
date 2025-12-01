@@ -22,12 +22,9 @@ public class DailyForecastPresenter implements DailyForecastOutputBoundary {
     @Override
     public void presentDailyForecast(DailyForecastOutputData outputData) {
 
-        viewModel.setCity(outputData.city);
-
         viewModel.setAdviceText(outputData.adviceText != null ? outputData.adviceText : "");
 
         viewModel.setStatusMessage(outputData.message != null ? outputData.message : "");
-        viewModel.setSuccess(outputData.success);
 
         // Slots → SlotView list
         List<WeatherViewModel.SlotView> slotViews = new ArrayList<>();

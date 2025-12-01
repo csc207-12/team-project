@@ -2,7 +2,8 @@ package use_case.weather;
 
 /**
  * Input data for the "get today's daily forecast" use case.
- * cityName can be null/empty to indicate "use auto location".
+ * cityName comes from the user's stored profile location.
+ * It should not be null or empty.
  */
 public class DailyForecastInputData {
     public final String cityName;

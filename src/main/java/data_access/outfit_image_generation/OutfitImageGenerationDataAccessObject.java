@@ -7,10 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.outfit_image_generation.OutfitImageGenerationDataAccessInterface;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerationDataAccessInterface {
@@ -63,28 +60,6 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
         }
 
         return images;
-    }
-
-    private List<String> extractClothingItems(List<String> blocks) {
-        List<String> results = new ArrayList<>();
-
-        for (String block : blocks) {
-            String lower = block.toLowerCase();
-
-            int idx = lower.indexOf("clothing items:");
-            if (idx != -1) {
-                String clothingLine = block.substring(idx + "clothing items:".length())
-                        .split("\n")[0]
-                        .trim()
-                        .replace("*", "")
-                        .replace("-", "")
-                        .replace("•", "")
-                        .trim();
-                results.add(clothingLine);
-            }
-        }
-
-        return results;
     }
 
     private String callGemini(String prompt) {
@@ -168,15 +143,5 @@ public class OutfitImageGenerationDataAccessObject implements OutfitImageGenerat
 
         } catch (Exception ignore) {}
         return null;
-    }
-
-    public static void saveBase64ToPNG(String base64, String filename) {
-        try {
-            byte[] decoded = Base64.getDecoder().decode(base64);
-            Files.write(Paths.get(filename), decoded);
-            System.out.println("Saved image → " + filename);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

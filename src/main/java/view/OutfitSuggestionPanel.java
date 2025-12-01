@@ -151,6 +151,11 @@ public class OutfitSuggestionPanel extends JPanel implements OutfitSuggestionVie
     }
 
     @Override
+    public void onOutfitSuggestionSuccess(String suggestions, double temperature, String city) {
+
+    }
+
+    @Override
     public void onOutfitSuggestionFailure(String errorMessage) {
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(this,

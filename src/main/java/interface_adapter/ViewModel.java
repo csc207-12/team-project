@@ -8,16 +8,10 @@ import java.beans.PropertyChangeSupport;
 
 public class ViewModel<T> {
 
-    private final String viewName;
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     private T state;
 
-    public ViewModel(String viewName) {
-        this.viewName = viewName;
-    }
-
-    public String getViewName() {
-        return this.viewName;
+    public ViewModel() {
     }
 
     public T getState() {
@@ -30,10 +24,6 @@ public class ViewModel<T> {
 
     public void firePropertyChange() {
         this.support.firePropertyChange("state", null, this.state);
-    }
-
-    public void firePropertyChange(String propertyName) {
-        this.support.firePropertyChange(propertyName, null, this.state);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
