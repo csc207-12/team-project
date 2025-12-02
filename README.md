@@ -28,7 +28,7 @@ The goal of the software is to help users decide what to wear and bring based on
 
 ## User Stories
 - **User Story 1:** As a user, I want to be able to see the weather throughout the day so I know what to bring.  
-- **User Story 2:** As a user, I want to know what to wear for the weather so I am comfortable.  
+- **User Story 2:** As a user, I want to see realistic outfit images generated from my recommended outfits so that I can visualize how it looks on me.
 - **User Story 3:** As a user, I want to get suggestions tailored to me so I can look nice when I’m outside.  
 - **User Story 4:** As a user, I want to be able to save my profile so I don’t have to rewrite all my preferences.  
 - **User Story 5:** As a user, I want to be able to get more than one suggestion if I don’t like the options given.  
@@ -56,22 +56,23 @@ The goal of the software is to help users decide what to wear and bring based on
 
 ---
 
-### Use Case 2: Generate Weather-Based Outfit Suggestion
-**Actors:** User, Weather API, Google Gemini API  
-**Goal:** Get an outfit suggestion suited to the current weather  
+### Use Case 2: Generate Image Based On Outfit Suggestion
+**Actors:** User, Google Gemini API  
+**Goal:** Get AI-generated outfit images based on an existing outfit suggestion
 
 **Preconditions:**
-- Weather data is successfully retrieved  
+- User has already received at least one outfit suggestion
+- System can successfully call the Google Gemini Image API
 
 **Main Flow:**
-1. User clicks “Get Outfit Suggestion”  
-2. System retrieves current and forecasted weather  
-3. Weather data is sent to the LLM model  
-4. LLM generates appropriate outfit suggestions  
-5. Outfit suggestion(s) are displayed  
+1. User clicks “Generate Outfit Images”
+2. System collects the selected outfit suggestion as text prompts
+3. System sends the outfit prompts to the Google Gemini Image API
+4. Gemini generates outfit image based on the provided prompt
+5. Generated outfit image(s) are displayed in a scrollable gallery view
 
 **Postconditions:**
-- User receives weather-appropriate outfit ideas  
+- User sees visual outfit image that correspond to the text outfit suggestion
 
 ---
 
